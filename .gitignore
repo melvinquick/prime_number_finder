@@ -1,3 +1,4 @@
 prime_number_finder/__pycache__/
 ignore/
 tests/
+bandit.yaml

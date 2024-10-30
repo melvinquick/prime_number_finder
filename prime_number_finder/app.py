@@ -17,7 +17,7 @@ from prime_checker import PrimeChecker
 from config_handler import ConfigHandler
 from file_handler import FileHandler
 
-icon = ConfigHandler("images/placeholder.ico")
+icon = ConfigHandler("images/prime_number_finder.ico")
 
 config_file = ConfigHandler("configs/config.yml")
 config = config_file.load_yaml_file()

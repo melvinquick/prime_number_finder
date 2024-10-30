@@ -1,4 +1,4 @@
-<p align="center"> <img src="prime_number_finder/images/placeholder.png" /> </p>
+<p align="center"> <img src="prime_number_finder/images/prime_number_finder.png" /> </p>
 
 ## Donations
 

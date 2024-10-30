@@ -11,7 +11,7 @@ The purpose of this project is to make a simple app to look for Prime Numbers an
 
 ## App Showcase
 
-![app-showcase.gif](gifs/app-showcase.gif)
+![app-showcase.gif](prime_number_finder/gifs/app_showcase.gif)
 
 ## Useful Information
 

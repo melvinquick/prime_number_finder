@@ -1,7 +1,7 @@
 import os
 
 
-class FileHandler:
+class PrimeFileHandler:
     def __init__(self):
         self.prime_numbers_file = self.get_file_path("prime_numbers.txt")
         self.current_number_file = self.get_file_path("current_number.txt")

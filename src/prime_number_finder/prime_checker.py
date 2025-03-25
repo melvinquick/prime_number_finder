@@ -7,7 +7,7 @@
 # Semiprimes are not true Primes and need to be ruled out by checking a number against the square of each Prime that was already added to the prime list... For example, 169 is the product of 13*13, so it's not Prime, it's Semiprime
 # Squarefree Primes are an extension of Semiprimes where the number is the product of two unique Primes from the Prime list... For example, 221 is the product of 13*17, so it's not Prime, it's a Squarefree Prime
 
-from file_handler import FileHandler
+from .prime_file_handler import PrimeFileHandler
 
 
 class PrimeChecker:
@@ -63,7 +63,6 @@ class PrimeChecker:
 
     # * Function to determine if a number is Prime or not
     def prime_check(self, number):
-
         if number in self.starting_prime_list:
             self.prime_list.append(number)
             return True
@@ -80,10 +79,10 @@ class PrimeChecker:
         if self.eleven_check(number) % 11 == 0:
             return False
 
-        if self.semiprime_check(number) == True:
+        if self.semiprime_check(number) is True:
             return False
 
-        if self.squarefree_prime_check(number) == True:
+        if self.squarefree_prime_check(number) is True:
             return False
 
         self.prime_list.append(number)
@@ -98,9 +97,9 @@ class PrimeChecker:
 
 
 def main():
-    file_handler = FileHandler()
-    current_number = file_handler.load_current_number()
-    prime_list = file_handler.load_prime_numbers()
+    prime_file_handler = PrimeFileHandler()
+    current_number = prime_file_handler.load_current_number()
+    prime_list = prime_file_handler.load_prime_numbers()
     prime_checker = PrimeChecker(prime_list)
     is_prime = False
     keep_iterating = True
@@ -115,11 +114,11 @@ def main():
         while keep_iterating:
             is_prime = prime_checker.prime_check(current_number)
 
-            if is_prime == True:
-                file_handler.save_found_prime(current_number)
+            if is_prime is True:
+                prime_file_handler.save_found_prime(current_number)
 
             current_number += 1
-            file_handler.save_current_number(current_number)
+            prime_file_handler.save_current_number(current_number)
 
     elif check_or_iterate.lower() == "check":
         check_to_number = int(
@@ -129,11 +128,11 @@ def main():
         while check_to_number > current_number:
             is_prime = prime_checker.prime_check(current_number)
 
-            if is_prime == True:
-                file_handler.save_found_prime(current_number)
+            if is_prime is True:
+                prime_file_handler.save_found_prime(current_number)
 
             current_number += 1
-            file_handler.save_current_number(current_number)
+            prime_file_handler.save_current_number(current_number)
 
         prime_checker.number_check(check_to_number)
 

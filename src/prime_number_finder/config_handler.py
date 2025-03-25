@@ -1,4 +1,5 @@
-import os, yaml
+import os
+import yaml
 
 
 class ConfigHandler:

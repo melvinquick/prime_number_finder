@@ -1,8 +1,8 @@
 [project]
 name = "prime_number_finder"
-version = "1.0.1"
+version = "1.0.2"
 description = "Python program for finding/checking Prime Numbers."
-readme = "README.md"
+readme = "src/prime_number_finder/resources/README.md"
 license = "MIT"
 authors = [{ name = "Melvin Quick", email = "melvinquick@proton.me" }]
 requires-python = ">=3.12"

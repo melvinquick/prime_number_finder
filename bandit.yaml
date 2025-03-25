@@ -2,8 +2,8 @@ exclude_dirs:
   [
     ".venv/",
     "dist/",
-    "src/psswd_box/__pycache__",
-    "src/psswd_box/resources/",
+    "src/prime_number_finder/__pycache__",
+    "src/prime_number_finder/resources/",
     ".gitignore",
     ".python-version",
     "bandit.yaml",

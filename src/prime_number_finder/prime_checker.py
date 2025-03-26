@@ -50,18 +50,15 @@ class PrimeChecker:
         new_number_3 = abs(new_number_1 - new_number_2)
         return new_number_3
 
-    def semiprime_check(self, number):
-        for prime in self.prime_list:
-            if number == prime * prime:
-                return True
-        return False
     def semiprime_and_squarefree_prime_check(self, number):
         """
         Function to check for Semiprimes and Squarefree Primes. Semiprimes are numbers that are squares of other primes. For example, 169 is the square of 13. Squarefree primes are numbers that are the product of other primes. For example, 221 is the product of 13 and 17. We can check for both these conditions in the same manner. If the number we're checking, mod a known prime (161 % 13), equals 0, then the number is either a semiprime or squarefree prime. We also only need to check up to known primes of less than or equal to the square root of the number we're checking since in either case, a factor of a semiprime or a squarefree prime will always be equal to or less than the square root of the number.
         """
 
-    def squarefree_prime_check(self, number):
+        square_root = number**0.5
         for prime in self.prime_list:
+            if square_root < prime:
+                break
             if number % prime == 0:
                 return True
         return False
@@ -87,10 +84,7 @@ class PrimeChecker:
         if self.eleven_check(number) % 11 == 0:
             return False
 
-        if self.semiprime_check(number) is True:
-            return False
-
-        if self.squarefree_prime_check(number) is True:
+        if self.semiprime_and_squarefree_prime_check(number) is True:
             return False
 
         self.prime_list.append(number)

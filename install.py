@@ -101,7 +101,7 @@ def install():
     venv_path = get_venv_path()
     create_venv(venv_path)
     install_app(venv_path)
-    version = "1.0.2"
+    version = "1.1.0"
     icon = get_icon(venv_path)
     python = get_python_path(venv_path)
     app = get_app_path(venv_path)

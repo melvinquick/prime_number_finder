@@ -23,3 +23,17 @@
 ### Patch Changes
 
 ### Documentation Changes
+
+## 1.1.0 (26 Mar 2025)
+
+### Major Changes
+
+### Minor Changes
+
+- [Clean up the semiprime and squarefree prime checks](https://codeberg.org/melvinquick/prime_number_finder/issues/2)
+
+### Patch Changes
+
+### Documentation Changes
+
+- [Add docstrings to each function in prime_checker to make it more apparent what's going on](https://codeberg.org/melvinquick/prime_number_finder/issues/1)

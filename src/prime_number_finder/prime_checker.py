@@ -1,12 +1,3 @@
-# Rules for finding Prime Numbers
-# Aside from 2, no even number is Prime
-# If the sum of the digits is divisible by 3, then the number will be divisble by 3
-# If the number end with 0 or 5, then it will be divisible by 5
-# Double the last digit and subtract it from the rest of the number... If the answer is divisible by 7, the original number will be divisible by 7... For instance, if the number is 161, take the last digit (1), double it, then subtract it from the rest of the number (16)... If the answer is divisible by 7, then so is the original number... In this case the answer is 14, 14 is divisible by 7, so 161 is also
-# Add alternate digits and subtract it from the difference of the next sum of alternate digits... For instance, if the number is 574652, add 5+4+5=14 and 7+6+2=15... If the difference i.e. 1 is divisible by 11, then the number will be divisible by 11... In this case, clearly the number is not divisible by 11
-# Semiprimes are not true Primes and need to be ruled out by checking a number against the square of each Prime that was already added to the prime list... For example, 169 is the product of 13*13, so it's not Prime, it's Semiprime
-# Squarefree Primes are an extension of Semiprimes where the number is the product of two unique Primes from the Prime list... For example, 221 is the product of 13*17, so it's not Prime, it's a Squarefree Prime
-
 from .prime_file_handler import PrimeFileHandler
 
 
@@ -20,6 +11,10 @@ class PrimeChecker:
 
     # * Function to determine the sum of the digits of the number
     def digit_sum(self, number):
+        """
+        Function to determine the sum of the digits of the number. If the sum of the digits are divisible by 3, then the number will be divisible by 3.
+        """
+
         digit_sum = 0
         digits = str(number)
 
@@ -29,10 +24,18 @@ class PrimeChecker:
 
     # * Function to check last digit of the number
     def last_digit(self, number):
+        """
+        Function to check last digit of the number. If the last digit of a number is in [0,2,4,5,6,8], then it can't be prime because it's either even, or is divisible by 5. The only exception to this is 2, which while even, is prime since it's only factors are 1 and 2.
+        """
+
         return int(str(number)[-1:])
 
     # * Function to check for the divisible by 7 condition
     def seven_check(self, number):
+        """
+        Function to check for the divisible by 7 condition. In this case, it's easier to give an example. Take 161. If we take it's last digit (1), double it (1*2=2), then subtract that from the number not including the last digit (161 becomes 16), which gives us 16-2=14, then take that result (14) and we can divide it evenly by 7 (in this case, 14/7=2), then the original number (161) is also evenly divisible by 7. This is always the case.
+        """
+
         last_digit = int(str(number)[-1:])
         new_number_1 = int(str(number)[:-1])
         new_number_2 = new_number_1 - (2 * last_digit)
@@ -40,6 +43,10 @@ class PrimeChecker:
 
     # * Function to check for the divisible by 11 condition
     def eleven_check(self, number):
+        """
+        Function to check for the divisible by 11 condition. This condition is best explained with an example. Take the number 574652. If we take the sums of alternating digits (5+4+5=14 and 7+6+2=15), then we take the absolute value of their difference (|14-15|=1), and that value is divisble by 11, then the original number is divisble by 11. In this case, 1 is not divisble by 11, so 574652 passes this check.
+        """
+
         new_number_1 = int(str(number)[0::2])
         new_number_1 = self.digit_sum(new_number_1)
         new_number_2 = int(str(number)[1::2])
@@ -53,6 +60,10 @@ class PrimeChecker:
             if number == prime * prime:
                 return True
         return False
+    def semiprime_and_squarefree_prime_check(self, number):
+        """
+        Function to check for Semiprimes and Squarefree Primes. Semiprimes are numbers that are squares of other primes. For example, 169 is the square of 13. Squarefree primes are numbers that are the product of other primes. For example, 221 is the product of 13 and 17. We can check for both these conditions in the same manner. If the number we're checking, mod a known prime (161 % 13), equals 0, then the number is either a semiprime or squarefree prime. We also only need to check up to known primes of less than or equal to the square root of the number we're checking since in either case, a factor of a semiprime or a squarefree prime will always be equal to or less than the square root of the number.
+        """
 
     # * Function to check for Squarefree Primes
     def squarefree_prime_check(self, number):
@@ -63,6 +74,10 @@ class PrimeChecker:
 
     # * Function to determine if a number is Prime or not
     def prime_check(self, number):
+        """
+        Function to determine if a number is Prime or not. It runs through all the checks and then returns if the number is prime or not.
+        """
+
         if number in self.starting_prime_list:
             self.prime_list.append(number)
             return True
@@ -90,6 +105,10 @@ class PrimeChecker:
         return True
 
     def number_check(self, number):
+        """
+        This function checks a number to see if it's in the prime list, and if it is therefore, prime.
+        """
+
         if number in self.prime_list:
             print(f"{number} is prime!")
         else:

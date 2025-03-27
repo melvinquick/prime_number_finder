@@ -11,7 +11,7 @@ class PrimeChecker:
 
     def digit_sum(self, number):
         """
-        Function to determine the sum of the digits of the number. If the sum of the digits are divisible by 3, then the number will be divisible by 3.
+        Function to determine the sum of the digits of the number passed to it.
         """
 
         digit_sum = 0
@@ -19,14 +19,28 @@ class PrimeChecker:
 
         for digit in digits:
             digit_sum += int(digit)
+
         return digit_sum
+
+    def digit_sum_check(self, number):
+        """
+        Function to determine the sum of the digits of the number. If the sum of the digits are divisible by 3, then the number will be divisible by 3.
+        """
+
+        if self.digit_sum(number) % 3 == 0:
+            return False
+
+        return True
 
     def last_digit(self, number):
         """
         Function to check the last digit of the number. If the last digit of a number is in [0,2,4,5,6,8], then it can't be prime because it's either even, or is divisible by 5. The only exception to this is 2, which while even, is prime since it's only factors are 1 and 2.
         """
 
-        return int(str(number)[-1:])
+        if int(str(number)[-1:]) in self.end_digit_fail_list:
+            return False
+
+        return True
 
     def seven_check(self, number):
         """

@@ -36,7 +36,11 @@ class PrimeChecker:
         last_digit = int(str(number)[-1:])
         new_number_1 = int(str(number)[:-1])
         new_number_2 = new_number_1 - (2 * last_digit)
-        return new_number_2
+
+        if new_number_2 % 7 == 0:
+            return False
+
+        return True
 
     def eleven_check(self, number):
         """
@@ -48,7 +52,11 @@ class PrimeChecker:
         new_number_2 = int(str(number)[1::2])
         new_number_2 = self.digit_sum(new_number_2)
         new_number_3 = abs(new_number_1 - new_number_2)
-        return new_number_3
+
+        if new_number_3 % 11 == 0:
+            return False
+
+        return True
 
     def semiprime_and_squarefree_prime_check(self, number):
         """
@@ -60,8 +68,9 @@ class PrimeChecker:
             if square_root < prime:
                 break
             if number % prime == 0:
-                return True
-        return False
+                return False
+
+        return True
 
     def prime_check(self, number):
         """
@@ -72,19 +81,19 @@ class PrimeChecker:
             self.prime_list.append(number)
             return True
 
-        if self.last_digit(number) in self.end_digit_fail_list:
+        if self.last_digit(number) is False:
             return False
 
-        if self.digit_sum(number) % 3 == 0:
+        if self.digit_sum_check(number) is False:
             return False
 
-        if self.seven_check(number) % 7 == 0:
+        if self.seven_check(number) is False:
             return False
 
-        if self.eleven_check(number) % 11 == 0:
+        if self.eleven_check(number) is False:
             return False
 
-        if self.semiprime_and_squarefree_prime_check(number) is True:
+        if self.semiprime_and_squarefree_prime_check(number) is False:
             return False
 
         self.prime_list.append(number)

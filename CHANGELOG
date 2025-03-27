@@ -37,3 +37,17 @@
 ### Documentation Changes
 
 - [Add docstrings to each function in prime_checker to make it more apparent what's going on](https://codeberg.org/melvinquick/prime_number_finder/issues/1)
+
+## 1.2.1 (27 Mar 2025)
+
+### Major Changes
+
+### Minor Changes
+
+- [Break out digit_sum function to two separate functions for logic cleanup purposes](https://codeberg.org/melvinquick/prime_number_finder/issues/4)
+
+### Patch Changes
+
+- [Move calculations to check functions and out of the prime_check function](https://codeberg.org/melvinquick/prime_number_finder/issues/3)
+
+### Documentation Changes

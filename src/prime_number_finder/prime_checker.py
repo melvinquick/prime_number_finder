@@ -23,7 +23,7 @@ class PrimeChecker:
 
     def last_digit(self, number):
         """
-        Function to check last digit of the number. If the last digit of a number is in [0,2,4,5,6,8], then it can't be prime because it's either even, or is divisible by 5. The only exception to this is 2, which while even, is prime since it's only factors are 1 and 2.
+        Function to check the last digit of the number. If the last digit of a number is in [0,2,4,5,6,8], then it can't be prime because it's either even, or is divisible by 5. The only exception to this is 2, which while even, is prime since it's only factors are 1 and 2.
         """
 
         return int(str(number)[-1:])
@@ -40,7 +40,7 @@ class PrimeChecker:
 
     def eleven_check(self, number):
         """
-        Function to check for the divisible by 11 condition. This condition is best explained with an example. Take the number 574652. If we take the sums of alternating digits (5+4+5=14 and 7+6+2=15), then we take the absolute value of their difference (|14-15|=1), and that value is divisble by 11, then the original number is divisble by 11. In this case, 1 is not divisble by 11, so 574652 passes this check.
+        Function to check for the divisible by 11 condition. This condition is best explained with an example. Take the number 574652. If we take the sums of alternating digits (5+4+5=14 and 7+6+2=15), then we take the absolute value of their difference (|14-15|=1), and that value is divisible by 11, then the original number is divisible by 11. In this case, 1 is not divisble by 11, so 574652 passes this check.
         """
 
         new_number_1 = int(str(number)[0::2])

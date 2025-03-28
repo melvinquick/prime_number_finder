@@ -30,7 +30,10 @@ def get_desktop_file_path():
 
 
 def backup(site_package_path):
-    backup = input("Do you want to back up your found prime files? (y/n): ").lower()
+    if sys.stdin.isatty() is False:
+        backup = "y"
+    else:
+        backup = input("Do you want to back up your found prime files? (y/n): ").lower()
 
     if backup == "y":
         backup_found_prime_files(site_package_path)

@@ -153,14 +153,15 @@ class PrimeNumberFinder(QMainWindow):
             self.most_recent_number.setText(str(self.current_number))
 
     def check_click(self):
-        self.check_number = int(self.check_input.text())
+        self.check_input_number_only = self.remove_non_ints(self.check_input.text())
+        self.check_number = int(self.check_input_number_only)
         self.check_button.setText("Checking")
 
         if self.check_number <= self.current_number:
             if self.check_number in self.prime_list:
-                self.check_output.setText("is prime!")
+                self.check_input.setText(f"Prime: {self.check_input_number_only}")
             else:
-                self.check_output.setText("is not prime!")
+                self.check_input.setText(f"Not Prime: {self.check_input_number_only}")
             self.check_button.setText("Check for Primality")
             self.check_timer.stop()
         else:
@@ -180,6 +181,11 @@ class PrimeNumberFinder(QMainWindow):
             self.most_recent_number.setText(str(self.current_number))
 
         self.check_click()
+
+    def remove_non_ints(self, check_text):
+        check_text = "".join(filter(str.isdigit, check_text))
+        self.check_input.setText(check_text)
+        return check_text
 
     def toggle_theme(self):
         if self.theme_toggle.text() == "Dark":
@@ -210,7 +216,6 @@ class PrimeNumberFinder(QMainWindow):
         self.most_recent_prime.setStyleSheet(self.widget_stylesheet)
         self.check_button.setStyleSheet(self.widget_stylesheet)
         self.check_input.setStyleSheet(self.widget_stylesheet)
-        self.check_output.setStyleSheet(self.widget_stylesheet)
         self.theme_toggle.setStyleSheet(self.widget_stylesheet)
 
         (

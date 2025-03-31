@@ -1,4 +1,6 @@
-window_settings:
-  title: Prime Number Finder
-  min_width: 300
-  min_height: 150
+window_title: "Prime Number Finder"
+window_size:
+  width: 460
+  height: 130
+input_widgets:
+  width: 180

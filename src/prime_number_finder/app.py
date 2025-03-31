@@ -13,7 +13,6 @@ from PySide6.QtWidgets import (
     QPushButton,
     QLabel,
     QVBoxLayout,
-    QHBoxLayout,
     QLineEdit,
 )
 
@@ -90,6 +89,7 @@ class PrimeNumberFinder(QMainWindow):
         self.iterate_timer.timeout.connect(self.iterate)
         self.check_button.pressed.connect(self.check_click)
         self.check_timer.timeout.connect(self.check_iterate)
+        self.theme_toggle.pressed.connect(self.toggle_theme)
 
         # * Create layouts
         page = QVBoxLayout()
@@ -103,6 +103,7 @@ class PrimeNumberFinder(QMainWindow):
 
         row_two.addWidget(self.most_recent_number_text)
         row_two.addWidget(self.most_recent_number)
+        iterate.addWidget(self.theme_toggle, 0, 0, 1, 1)
 
         row_three.addWidget(self.most_recent_prime_text)
         row_three.addWidget(self.most_recent_prime)

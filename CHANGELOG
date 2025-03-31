@@ -51,3 +51,17 @@
 - [Move calculations to check functions and out of the prime_check function](https://codeberg.org/melvinquick/prime_number_finder/issues/3)
 
 ### Documentation Changes
+
+## 1.5.0 (31 Mar 2025)
+
+### Major Changes
+
+### Minor Changes
+
+- [Update UI to be more in line with my other apps](https://codeberg.org/melvinquick/prime_number_finder/issues/5)
+- [Add toggle button for light/dark themes](https://codeberg.org/melvinquick/prime_number_finder/issues/6)
+- [Update check input box to be able to have text in it as well so the check_output widget can go away](https://codeberg.org/melvinquick/prime_number_finder/issues/7)
+
+### Patch Changes
+
+### Documentation Changes

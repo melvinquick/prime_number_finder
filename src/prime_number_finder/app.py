@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QVBoxLayout,
     QLineEdit,
+    QGridLayout,
 )
 
 from .prime_checker import PrimeChecker
@@ -36,10 +37,9 @@ class PrimeNumberFinder(QMainWindow):
         self.show()
 
         # * Set window default settings
-        self.setWindowTitle(config["window_settings"]["title"])
-        self.setMaximumSize(
-            config["window_settings"]["min_width"],
-            config["window_settings"]["min_height"],
+        self.setWindowTitle(config["window_title"])
+        self.setFixedSize(
+            config["window_size"]["width"], config["window_size"]["height"]
         )
 
         # * Define normal variables
@@ -57,30 +57,35 @@ class PrimeNumberFinder(QMainWindow):
         self.iterate_timer.setInterval(10)
 
         self.most_recent_number_text = QLabel(
-            "Most recent number checked: ", alignment=Qt.AlignmentFlag.AlignLeft
+            "Most recent number checked: ", alignment=Qt.AlignmentFlag.AlignCenter
         )
+        self.most_recent_number_text.setFixedWidth(config["input_widgets"]["width"])
+
         self.most_recent_number = QLabel(
             str(self.current_number), alignment=Qt.AlignmentFlag.AlignRight
         )
 
         self.most_recent_prime_text = QLabel(
-            "Most recent prime found: ", alignment=Qt.AlignmentFlag.AlignLeft
+            "Most recent prime found: ", alignment=Qt.AlignmentFlag.AlignCenter
         )
+        self.most_recent_prime_text.setFixedWidth(config["input_widgets"]["width"])
+
         self.most_recent_prime = QLabel(
             str(self.prime_list[-1]), alignment=Qt.AlignmentFlag.AlignRight
         )
 
         self.check_button = QPushButton("Check for Primality")
+        self.check_button.setFixedWidth(config["input_widgets"]["width"])
 
         self.check_input = QLineEdit(f"{self.current_number}")
         self.check_input.setValidator(QIntValidator(bottom=0))
-
-        self.check_output = QLabel()
+        self.check_input.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         self.check_timer = QTimer(self)
         self.check_timer.setInterval(10)
 
         self.theme_toggle = QPushButton("Dark")
+        self.theme_toggle.setFixedWidth(config["input_widgets"]["width"])
 
         self.check_click()
 
@@ -93,30 +98,30 @@ class PrimeNumberFinder(QMainWindow):
 
         # * Create layouts
         page = QVBoxLayout()
-        row_one = QHBoxLayout()
-        row_two = QHBoxLayout()
-        row_three = QHBoxLayout()
-        row_four = QHBoxLayout()
+        iterate = QGridLayout()
+        numbers = QGridLayout()
+        primes = QGridLayout()
+        checks = QGridLayout()
 
         # * Add widgets to layouts
-        row_one.addWidget(self.iterate_button)
 
-        row_two.addWidget(self.most_recent_number_text)
-        row_two.addWidget(self.most_recent_number)
         iterate.addWidget(self.theme_toggle, 0, 0, 1, 1)
+        iterate.addWidget(self.iterate_button, 0, 1, 1, 1)
 
-        row_three.addWidget(self.most_recent_prime_text)
-        row_three.addWidget(self.most_recent_prime)
+        numbers.addWidget(self.most_recent_number_text, 0, 0, 1, 1)
+        numbers.addWidget(self.most_recent_number, 0, 1, 1, 2)
 
-        row_four.addWidget(self.check_button)
-        row_four.addWidget(self.check_input)
-        row_four.addWidget(self.check_output)
+        primes.addWidget(self.most_recent_prime_text, 0, 0, 1, 1)
+        primes.addWidget(self.most_recent_prime, 0, 1, 1, 2)
+
+        checks.addWidget(self.check_button, 0, 0, 1, 1)
+        checks.addWidget(self.check_input, 0, 1, 1, 2)
 
         # * Setup overall page layout and set default window theme
-        page.addLayout(row_one)
-        page.addLayout(row_two)
-        page.addLayout(row_three)
-        page.addLayout(row_four)
+        page.addLayout(iterate)
+        page.addLayout(numbers)
+        page.addLayout(primes)
+        page.addLayout(checks)
 
         gui = QWidget()
         gui.setLayout(page)

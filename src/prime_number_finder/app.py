@@ -18,8 +18,7 @@ from PySide6.QtWidgets import (
 )
 
 from .prime_checker import PrimeChecker
-from .yaml_file_handler import YamlFileHandler
-from .prime_file_handler import PrimeFileHandler
+from .file_handler import YamlFileHandler, PrimeFileHandler
 
 config_file = YamlFileHandler("resources/configs/config.yml")
 config = config_file.load_yaml_file()

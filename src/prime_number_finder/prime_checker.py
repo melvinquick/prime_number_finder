@@ -1,4 +1,4 @@
-from .prime_file_handler import PrimeFileHandler
+from .file_handler import PrimeFileHandler
 
 
 class PrimeChecker:

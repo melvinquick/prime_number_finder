@@ -2,7 +2,7 @@
 Python program for finding/checking Prime Numbers.
 """
 
-import sys
+from sys import argv, exit
 
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIntValidator
@@ -225,9 +225,9 @@ class PrimeNumberFinder(QMainWindow):
 
 
 def main():
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
     main_window = PrimeNumberFinder()  # noqa: F841
-    sys.exit(app.exec())
+    exit(app.exec())
 
 
 if __name__ == "__main__":

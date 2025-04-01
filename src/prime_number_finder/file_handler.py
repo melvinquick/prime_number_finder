@@ -1,5 +1,5 @@
-import os
-import yaml
+from os import path
+from yaml import safe_load, safe_dump
 
 
 class PrimeFileHandler:
@@ -11,7 +11,7 @@ class PrimeFileHandler:
         self.prime_list = []
 
     def get_file_path(self, filename):
-        return os.path.join(os.path.dirname(__file__), filename)
+        return path.join(path.dirname(__file__), filename)
 
     def load_prime_numbers(self):
         with open(self.prime_numbers_file, "r") as f:
@@ -40,11 +40,11 @@ class YamlFileHandler:
 
     def load_yaml_file(self):
         with open(self.get_file_path(), "r") as f:
-            return yaml.safe_load(f)
+            return safe_load(f)
 
     def save_yaml_file(self, configs):
         with open(self.get_file_path(), "w") as f:
-            return yaml.safe_dump(configs, f, default_flow_style=False)
+            return safe_dump(configs, f, default_flow_style=False)
 
     def get_file_path(self):
-        return os.path.join(os.path.dirname(__file__), self.filename)
+        return path.join(path.dirname(__file__), self.filename)

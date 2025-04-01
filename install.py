@@ -1,7 +1,7 @@
-import os
-import sys
-import subprocess
-import shutil
+from os import path, listdir, makedirs, remove
+from sys import stdin, stdout
+from subprocess import run, DEVNULL
+from shutil import copy2, rmtree
 from textwrap import dedent
 
 
@@ -10,29 +10,29 @@ def print_green(skk):
 
 
 def get_venv_path():
-    home_dir = os.path.expanduser("~")
-    venv_dir = os.path.join(home_dir, ".venvs")
-    if not os.path.exists(venv_dir):
-        os.makedirs(venv_dir)
-    return os.path.join(venv_dir, "prime_number_finder_venv")
+    home_dir = path.expanduser("~")
+    venv_dir = path.join(home_dir, ".venvs")
+    if not path.exists(venv_dir):
+        makedirs(venv_dir)
+    return path.join(venv_dir, "prime_number_finder_venv")
 
 
 def get_site_package_path(venv_path):
-    site_packages = os.path.join(venv_path, "lib")
-    for folder in os.listdir(site_packages):
+    site_packages = path.join(venv_path, "lib")
+    for folder in listdir(site_packages):
         if folder.startswith("python"):
-            return os.path.join(site_packages, folder, "site-packages")
+            return path.join(site_packages, folder, "site-packages")
 
 
 def get_desktop_file_path():
-    return os.path.expanduser("~/.local/share/applications/prime_number_finder.desktop")
+    return path.expanduser("~/.local/share/applications/prime_number_finder.desktop")
 
 
 # * BACKUP/RESTORE SECTION
 
 
 def backup(site_package_path):
-    if sys.stdin.isatty() is False:
+    if stdin.isatty() is False:
         backup = "y"
     else:
         backup = input("Do you want to back up your found prime files? (y/n): ").lower()
@@ -46,36 +46,36 @@ def backup(site_package_path):
 
 
 def backup_found_prime_files(site_packages):
-    backup_dir = os.path.expanduser("~/found_primes_backup/")
-    current_number_app_path = os.path.join(
+    backup_dir = path.expanduser("~/found_primes_backup/")
+    current_number_app_path = path.join(
         site_packages, "prime_number_finder/resources/data/current_number.txt"
     )
-    prime_list_app_path = os.path.join(
+    prime_list_app_path = path.join(
         site_packages, "prime_number_finder/resources/data/prime_numbers.txt"
     )
-    current_number_backup_path = os.path.join(backup_dir, "current_number.txt")
-    prime_list_backup_path = os.path.join(backup_dir, "prime_numbers.txt")
+    current_number_backup_path = path.join(backup_dir, "current_number.txt")
+    prime_list_backup_path = path.join(backup_dir, "prime_numbers.txt")
 
     if (
-        os.path.exists(current_number_app_path) is False
-        or os.path.exists(prime_list_app_path) is False
+        path.exists(current_number_app_path) is False
+        or path.exists(prime_list_app_path) is False
     ):
         print("Backup files not found. Skipping backup.")
 
     else:
         print("Backing up files to $HOME/found_primes_backup...", end="")
-        sys.stdout.flush()
+        stdout.flush()
 
-        if os.path.exists(backup_dir) is False:
-            os.makedirs(backup_dir)
+        if path.exists(backup_dir) is False:
+            makedirs(backup_dir)
 
-        shutil.copy2(current_number_app_path, current_number_backup_path)
-        shutil.copy2(prime_list_app_path, prime_list_backup_path)
+        copy2(current_number_app_path, current_number_backup_path)
+        copy2(prime_list_app_path, prime_list_backup_path)
         print_green("󰄬")
 
 
 def restore(site_package_path):
-    if sys.stdin.isatty() is False:
+    if stdin.isatty() is False:
         restore = "y"
     else:
         restore = input(
@@ -91,28 +91,28 @@ def restore(site_package_path):
 
 
 def restore_found_prime_files(site_packages):
-    backup_dir = os.path.expanduser("~/found_primes_backup/")
-    current_number_app_path = os.path.join(
+    backup_dir = path.expanduser("~/found_primes_backup/")
+    current_number_app_path = path.join(
         site_packages, "prime_number_finder/resources/data/current_number.txt"
     )
-    prime_list_app_path = os.path.join(
+    prime_list_app_path = path.join(
         site_packages, "prime_number_finder/resources/data/prime_numbers.txt"
     )
-    current_number_backup_path = os.path.join(backup_dir, "current_number.txt")
-    prime_list_backup_path = os.path.join(backup_dir, "prime_numbers.txt")
+    current_number_backup_path = path.join(backup_dir, "current_number.txt")
+    prime_list_backup_path = path.join(backup_dir, "prime_numbers.txt")
 
     if (
-        os.path.exists(current_number_backup_path) is False
-        or os.path.exists(prime_list_backup_path) is False
+        path.exists(current_number_backup_path) is False
+        or path.exists(prime_list_backup_path) is False
     ):
         print("Restore files not found. Skipping restore.")
 
     else:
         print("Restoring files to app path...", end="")
-        sys.stdout.flush()
+        stdout.flush()
 
-        shutil.copy2(current_number_backup_path, current_number_app_path)
-        shutil.copy2(prime_list_backup_path, prime_list_app_path)
+        copy2(current_number_backup_path, current_number_app_path)
+        copy2(prime_list_backup_path, prime_list_app_path)
         print_green("󰄬")
 
 
@@ -126,35 +126,32 @@ def uninstall():
     print_green("\nUNINSTALL")
     print("-" * 9)
 
-    if (
-        os.path.exists(venv_path) is False
-        and os.path.exists(desktop_file_path) is False
-    ):
+    if path.exists(venv_path) is False and path.exists(desktop_file_path) is False:
         print_green("\nApplication not installed... Moving on to installation.\n")
 
     else:
-        if os.path.exists(venv_path):
+        if path.exists(venv_path):
             site_package_path = get_site_package_path(venv_path)
             backup(site_package_path)
             print("Removing the virtual environment...", end="")
-            sys.stdout.flush()
-            shutil.rmtree(venv_path)
+            stdout.flush()
+            rmtree(venv_path)
             print_green("󰄬")
 
         else:
             print("No virtual environment found...", end="")
-            sys.stdout.flush()
+            stdout.flush()
             print_green("󰄬")
 
-        if os.path.exists(desktop_file_path):
+        if path.exists(desktop_file_path):
             print("Removing the .desktop entry...", end="")
-            sys.stdout.flush()
-            os.remove(desktop_file_path)
+            stdout.flush()
+            remove(desktop_file_path)
             print_green("󰄬")
 
         else:
             print("No .desktop entry found...", end="")
-            sys.stdout.flush()
+            stdout.flush()
             print_green("󰄬")
 
         print_green(
@@ -167,36 +164,36 @@ def uninstall():
 
 def create_venv(venv_path):
     print("Creating the virtual environment...", end="")
-    sys.stdout.flush()
-    subprocess.run(
+    stdout.flush()
+    run(
         ["python3", "-m", "venv", venv_path],
         check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=DEVNULL,
+        stderr=DEVNULL,
     )
     print_green("󰄬")
 
     print("Ensuring pip is up to date...", end="")
-    sys.stdout.flush()
-    pip_path = os.path.join(venv_path, "bin", "pip")
-    subprocess.run(
+    stdout.flush()
+    pip_path = path.join(venv_path, "bin", "pip")
+    run(
         [pip_path, "install", "--upgrade", "pip"],
         check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=DEVNULL,
+        stderr=DEVNULL,
     )
     print_green("󰄬")
 
 
 def install_app(venv_path):
     print("Installing Prime Number Finder into the virtual environment...", end="")
-    sys.stdout.flush()
-    pip_path = os.path.join(venv_path, "bin", "pip")
-    subprocess.run(
+    stdout.flush()
+    pip_path = path.join(venv_path, "bin", "pip")
+    run(
         [pip_path, "install", "prime_number_finder"],
         check=True,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stdout=DEVNULL,
+        stderr=DEVNULL,
     )
     print_green("󰄬")
 
@@ -205,21 +202,21 @@ def get_icon(site_packages):
     icon_relative_path = (
         "prime_number_finder/resources/images/prime_number_finder-128.png"
     )
-    full_icon_path = os.path.join(site_packages, icon_relative_path)
+    full_icon_path = path.join(site_packages, icon_relative_path)
     return full_icon_path
 
 
 def get_python_path(venv_path):
-    return os.path.join(venv_path, "bin", "python3")
+    return path.join(venv_path, "bin", "python3")
 
 
 def get_app_path(venv_path):
-    return os.path.join(venv_path, "bin", "prime-number-finder")
+    return path.join(venv_path, "bin", "prime-number-finder")
 
 
 def create_desktop_file(icon, version, python, app):
     print("Creating the .desktop entry...", end="")
-    sys.stdout.flush()
+    stdout.flush()
     desktop_content = dedent(f"""
     [Desktop Entry]
     Version={version}
@@ -233,7 +230,7 @@ def create_desktop_file(icon, version, python, app):
     """)
     desktop_content = desktop_content.lstrip()
     with open(
-        os.path.expanduser("~/.local/share/applications/prime_number_finder.desktop"),
+        path.expanduser("~/.local/share/applications/prime_number_finder.desktop"),
         "w",
     ) as f:
         f.write(desktop_content)
@@ -254,9 +251,9 @@ def install():
     app = get_app_path(venv_path)
     create_desktop_file(icon, version, python, app)
 
-    backup_dir = os.path.expanduser("~/found_primes_backup/")
+    backup_dir = path.expanduser("~/found_primes_backup/")
 
-    if os.path.exists(backup_dir):
+    if path.exists(backup_dir):
         restore(site_package_path)
 
     print_green("\nApplication has been installed successfully.")

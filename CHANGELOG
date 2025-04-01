@@ -65,3 +65,16 @@
 ### Patch Changes
 
 ### Documentation Changes
+
+## 1.7.0 (01 Apr 2025)
+
+### Major Changes
+
+### Minor Changes
+
+- [Move current_number.txt and prime_numbers.txt file into new resources/data directory](https://codeberg.org/melvinquick/prime_number_finder/issues/8)
+- [Delete unused config_handler.py and combine prime_file_handler.py and yaml_file_handler.py into one file_handler.py file](https://codeberg.org/melvinquick/prime_number_finder/issues/9)
+
+### Patch Changes
+
+### Documentation Changes

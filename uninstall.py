@@ -46,10 +46,10 @@ def backup(site_package_path):
 def backup_found_prime_files(site_packages):
     backup_dir = os.path.expanduser("~/found_primes_backup/")
     current_number_app_path = os.path.join(
-        site_packages, "prime_number_finder/current_number.txt"
+        site_packages, "prime_number_finder/resources/data/current_number.txt"
     )
     prime_list_app_path = os.path.join(
-        site_packages, "prime_number_finder/prime_numbers.txt"
+        site_packages, "prime_number_finder/resources/data/prime_numbers.txt"
     )
     current_number_backup_path = os.path.join(backup_dir, "current_number.txt")
     prime_list_backup_path = os.path.join(backup_dir, "prime_numbers.txt")

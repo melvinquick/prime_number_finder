@@ -1,6 +1,6 @@
 [project]
 name = "prime_number_finder"
-version = "1.7.0"
+version = "1.7.1"
 description = "Python program for finding/checking Prime Numbers."
 readme = "src/prime_number_finder/resources/PYPI_README.md"
 license = "MIT"

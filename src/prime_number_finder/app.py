@@ -17,35 +17,38 @@ from PySide6.QtWidgets import (
     QGridLayout,
 )
 
+from .database_handler import DatabaseHandler
+from .file_handler import YamlFileHandler
 from .prime_checker import PrimeChecker
-from .file_handler import YamlFileHandler, PrimeFileHandler
-
-config_file = YamlFileHandler("resources/configs/config.yml")
-config = config_file.load_yaml_file()
-
-themes_file = YamlFileHandler("resources/configs/themes.yml")
-themes = themes_file.load_yaml_file()
 
 
 class PrimeNumberFinder(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        config_file = YamlFileHandler("resources/configs/config.yml")
+        self.config = config_file.load_yaml_file()
+
+        themes_file = YamlFileHandler("resources/configs/themes.yml")
+        self.themes = themes_file.load_yaml_file()
+
+        self.db_handler = DatabaseHandler()
+
         self.init_ui()
 
     def init_ui(self):
         self.show()
 
         # * Set window default settings
-        self.setWindowTitle(config["window_title"])
+        self.setWindowTitle(self.config["window_title"])
         self.setFixedSize(
-            config["window_size"]["width"], config["window_size"]["height"]
+            self.config["window_size"]["width"], self.config["window_size"]["height"]
         )
 
         # * Define normal variables
-        self.prime_file_handler = PrimeFileHandler()
-        self.current_number = self.prime_file_handler.load_current_number()
+        self.current_number = self.db_handler.load_current_number()
         self.check_number = int()
-        self.prime_list = self.prime_file_handler.load_prime_numbers()
+        self.prime_list = self.db_handler.load_prime_numbers()
         self.prime_checker = PrimeChecker(self.prime_list)
         self.keep_iterating = False
 
@@ -58,7 +61,9 @@ class PrimeNumberFinder(QMainWindow):
         self.most_recent_number_text = QLabel(
             "Most recent number checked: ", alignment=Qt.AlignmentFlag.AlignCenter
         )
-        self.most_recent_number_text.setFixedWidth(config["input_widgets"]["width"])
+        self.most_recent_number_text.setFixedWidth(
+            self.config["input_widgets"]["width"]
+        )
 
         self.most_recent_number = QLabel(
             str(self.current_number), alignment=Qt.AlignmentFlag.AlignRight
@@ -67,14 +72,15 @@ class PrimeNumberFinder(QMainWindow):
         self.most_recent_prime_text = QLabel(
             "Most recent prime found: ", alignment=Qt.AlignmentFlag.AlignCenter
         )
-        self.most_recent_prime_text.setFixedWidth(config["input_widgets"]["width"])
+        self.most_recent_prime_text.setFixedWidth(self.config["input_widgets"]["width"])
 
         self.most_recent_prime = QLabel(
-            str(self.prime_list[-1]), alignment=Qt.AlignmentFlag.AlignRight
+            str(self.prime_list[-1] if self.prime_list else 2),
+            alignment=Qt.AlignmentFlag.AlignRight,
         )
 
         self.check_button = QPushButton("Check for Primality")
-        self.check_button.setFixedWidth(config["input_widgets"]["width"])
+        self.check_button.setFixedWidth(self.config["input_widgets"]["width"])
 
         self.check_input = QLineEdit(f"{self.current_number}")
         self.check_input.setValidator(QIntValidator(bottom=0))
@@ -84,7 +90,7 @@ class PrimeNumberFinder(QMainWindow):
         self.check_timer.setInterval(10)
 
         self.theme_toggle = QPushButton("Dark")
-        self.theme_toggle.setFixedWidth(config["input_widgets"]["width"])
+        self.theme_toggle.setFixedWidth(self.config["input_widgets"]["width"])
 
         self.check_click()
 
@@ -143,17 +149,22 @@ class PrimeNumberFinder(QMainWindow):
             is_prime = self.prime_checker.prime_check(self.current_number)
 
             if is_prime is True:
-                self.prime_file_handler.save_found_prime(self.current_number)
+                self.db_handler.save_found_prime(self.current_number)
                 self.prime_list.append(self.current_number)
                 self.most_recent_prime.setText(str(self.current_number))
 
             self.current_number += 1
-            self.prime_file_handler.save_current_number(self.current_number)
+            self.db_handler.save_current_number(self.current_number)
             self.most_recent_number.setText(str(self.current_number))
 
     def check_click(self):
         self.check_input_number_only = self.remove_non_ints(self.check_input.text())
-        self.check_number = int(self.check_input_number_only)
+        if not self.check_input_number_only:
+            return
+        try:
+            self.check_number = int(self.check_input_number_only)
+        except ValueError:
+            return
         self.check_button.setText("Checking")
 
         if self.check_number <= self.current_number:
@@ -171,15 +182,16 @@ class PrimeNumberFinder(QMainWindow):
             is_prime = self.prime_checker.prime_check(self.current_number)
 
             if is_prime is True:
-                self.prime_file_handler.save_found_prime(self.current_number)
+                self.db_handler.save_found_prime(self.current_number)
                 self.prime_list.append(self.current_number)
                 self.most_recent_prime.setText(str(self.current_number))
 
             self.current_number += 1
-            self.prime_file_handler.save_current_number(self.current_number)
+            self.db_handler.save_current_number(self.current_number)
             self.most_recent_number.setText(str(self.current_number))
 
-        self.check_click()
+        if self.check_number <= self.current_number:
+            self.check_click()
 
     def remove_non_ints(self, check_text):
         check_text = "".join(filter(str.isdigit, check_text))
@@ -198,14 +210,14 @@ class PrimeNumberFinder(QMainWindow):
 
     def apply_theme(self, theme):
         self.main_stylesheet = f"""
-            background-color: {themes[theme]["background-color"]};
-            color: {themes[theme]["color"]};
-            border: {themes[theme]["border"]};
-            border-radius: {themes["general"]["border-radius"]};
-            padding: {themes["general"]["padding"]};
+            background-color: {self.themes[theme]["background-color"]};
+            color: {self.themes[theme]["color"]};
+            border: {self.themes[theme]["border"]};
+            border-radius: {self.themes["general"]["border-radius"]};
+            padding: {self.themes["general"]["padding"]};
             """
         self.widget_stylesheet = f"""
-            background-color: {themes[theme]["widget-background-color"]};
+            background-color: {self.themes[theme]["widget-background-color"]};
             """
         self.setStyleSheet(self.main_stylesheet)
         self.iterate_button.setStyleSheet(self.widget_stylesheet)

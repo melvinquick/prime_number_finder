@@ -1,4 +1,4 @@
-from .file_handler import PrimeFileHandler
+from .database_handler import DatabaseHandler
 
 
 class PrimeChecker:
@@ -92,7 +92,6 @@ class PrimeChecker:
         """
 
         if number in self.starting_prime_list:
-            self.prime_list.append(number)
             return True
 
         if self.last_digit(number) is False:
@@ -110,8 +109,6 @@ class PrimeChecker:
         if self.semiprime_and_squarefree_prime_check(number) is False:
             return False
 
-        self.prime_list.append(number)
-
         return True
 
     def number_check(self, number):
@@ -126,9 +123,9 @@ class PrimeChecker:
 
 
 def main():
-    prime_file_handler = PrimeFileHandler()
-    current_number = prime_file_handler.load_current_number()
-    prime_list = prime_file_handler.load_prime_numbers()
+    db_handler = DatabaseHandler()
+    current_number = db_handler.load_current_number()
+    prime_list = db_handler.load_prime_numbers()
     prime_checker = PrimeChecker(prime_list)
     is_prime = False
     keep_iterating = True
@@ -144,10 +141,10 @@ def main():
             is_prime = prime_checker.prime_check(current_number)
 
             if is_prime is True:
-                prime_file_handler.save_found_prime(current_number)
+                db_handler.save_found_prime(current_number)
 
             current_number += 1
-            prime_file_handler.save_current_number(current_number)
+            db_handler.save_current_number(current_number)
 
     elif check_or_iterate.lower() == "check":
         check_to_number = int(
@@ -158,12 +155,17 @@ def main():
             is_prime = prime_checker.prime_check(current_number)
 
             if is_prime is True:
-                prime_file_handler.save_found_prime(current_number)
+                db_handler.save_found_prime(current_number)
 
             current_number += 1
-            prime_file_handler.save_current_number(current_number)
+            db_handler.save_current_number(current_number)
 
-        prime_checker.number_check(check_to_number)
+        if check_to_number in prime_list:
+            print(f"{check_to_number} is prime!")
+        else:
+            print(f"{check_to_number} is not prime!")
+
+    db_handler.close_connection()
 
 
 if __name__ == "__main__":

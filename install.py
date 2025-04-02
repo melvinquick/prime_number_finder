@@ -47,30 +47,24 @@ def backup(site_package_path):
 
 def backup_found_prime_files(site_packages):
     backup_dir = path.expanduser("~/found_primes_backup/")
-    current_number_app_path = path.join(
-        site_packages, "prime_number_finder/resources/data/current_number.txt"
+    database_app_path = path.join(
+        site_packages, "prime_number_finder/resources/data/prime_data.db"
     )
-    prime_list_app_path = path.join(
-        site_packages, "prime_number_finder/resources/data/prime_numbers.txt"
-    )
-    current_number_backup_path = path.join(backup_dir, "current_number.txt")
-    prime_list_backup_path = path.join(backup_dir, "prime_numbers.txt")
+    database_backup_path = path.join(backup_dir, "prime_data.db")
 
-    if (
-        path.exists(current_number_app_path) is False
-        or path.exists(prime_list_app_path) is False
-    ):
-        print("Backup files not found. Skipping backup.")
+    if path.exists(database_app_path) is False:
+        print(" App database not found. Skipping backup.")
 
     else:
-        print("Backing up files to $HOME/found_primes_backup...", end="")
+        print(
+            "Backing up database to $HOME/found_primes_backup/prime_data.db...", end=""
+        )
         stdout.flush()
 
         if path.exists(backup_dir) is False:
             makedirs(backup_dir)
 
-        copy2(current_number_app_path, current_number_backup_path)
-        copy2(prime_list_app_path, prime_list_backup_path)
+        copy2(database_app_path, database_backup_path)
         print_green("󰄬")
 
 
@@ -92,27 +86,19 @@ def restore(site_package_path):
 
 def restore_found_prime_files(site_packages):
     backup_dir = path.expanduser("~/found_primes_backup/")
-    current_number_app_path = path.join(
-        site_packages, "prime_number_finder/resources/data/current_number.txt"
+    database_app_path = path.join(
+        site_packages, "prime_number_finder/resources/data/prime_data.db"
     )
-    prime_list_app_path = path.join(
-        site_packages, "prime_number_finder/resources/data/prime_numbers.txt"
-    )
-    current_number_backup_path = path.join(backup_dir, "current_number.txt")
-    prime_list_backup_path = path.join(backup_dir, "prime_numbers.txt")
+    database_backup_path = path.join(backup_dir, "prime_data.db")
 
-    if (
-        path.exists(current_number_backup_path) is False
-        or path.exists(prime_list_backup_path) is False
-    ):
-        print("Restore files not found. Skipping restore.")
+    if path.exists(database_backup_path) is False:
+        print("Backup database not found. Skipping restore.")
 
     else:
-        print("Restoring files to app path...", end="")
+        print("Restoring database to app path...", end="")
         stdout.flush()
 
-        copy2(current_number_backup_path, current_number_app_path)
-        copy2(prime_list_backup_path, prime_list_app_path)
+        copy2(database_backup_path, database_app_path)
         print_green("󰄬")
 
 

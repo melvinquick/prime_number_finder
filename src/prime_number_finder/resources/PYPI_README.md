@@ -1,12 +1,12 @@
 ## Table of Contents
 
 [Donations](#donations)  
-[Stars](#stars)
+[Stars](#stars)  
 [Purpose](#purpose)  
 [Install on Linux](#linux)  
 [Install on Windows](#windows)  
 [Build Source Code](#build-source-code)  
-[Other useful information](#useful-information)
+[Other Useful Information](#useful-information)
 
 ## Donations
 

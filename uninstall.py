@@ -51,7 +51,7 @@ def backup_found_prime_files(site_packages):
     database_backup_path = path.join(backup_dir, "prime_data.db")
 
     if path.exists(database_app_path) is False:
-        print(" App database not found. Skipping backup.")
+        print("App database not found. Skipping backup.")
 
     else:
         print(

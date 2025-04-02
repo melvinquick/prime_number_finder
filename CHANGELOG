@@ -90,3 +90,15 @@
 - [Delete unused config_handler.py file](https://codeberg.org/melvinquick/prime_number_finder/issues/10)
 
 ### Documentation Changes
+
+## 1.8.0 (02 Apr 2025)
+
+### Major Changes
+
+### Minor Changes
+
+### Patch Changes
+
+- [Switch from using .TXT files for data storage to using a sqlite3 database](https://codeberg.org/melvinquick/prime_number_finder/issues/11)
+
+### Documentation Changes

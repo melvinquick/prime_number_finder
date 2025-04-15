@@ -158,20 +158,20 @@ class PrimeNumberFinder(QMainWindow):
             self.most_recent_number.setText(str(self.current_number))
 
     def check_click(self):
-        self.check_input_number_only = self.remove_non_ints(self.check_input.text())
-        if not self.check_input_number_only:
+        check_input_number_only = self.remove_non_ints(self.check_input.text())
+        if not check_input_number_only:
             return
         try:
-            self.check_number = int(self.check_input_number_only)
+            self.check_number = int(check_input_number_only)
         except ValueError:
             return
         self.check_button.setText("Checking")
 
         if self.check_number <= self.current_number:
             if self.check_number in self.prime_list:
-                self.check_input.setText(f"Prime: {self.check_input_number_only}")
+                self.check_input.setText(f"Prime: {check_input_number_only}")
             else:
-                self.check_input.setText(f"Not Prime: {self.check_input_number_only}")
+                self.check_input.setText(f"Not Prime: {check_input_number_only}")
             self.check_button.setText("Check for Primality")
             self.check_timer.stop()
         else:

@@ -6,7 +6,6 @@
 [Stars](#stars)  
 [Purpose](#purpose)  
 [Install on Linux](#linux)  
-[Install on Windows](#windows)  
 [Build Source Code](#build-source-code)  
 [Visual App Showcase](#app-showcase)  
 [Other Useful Information](#useful-information)  
@@ -33,10 +32,6 @@ The purpose of this project is to make a simple app to look for Prime Numbers an
 
 Install: `curl -s https://codeberg.org/melvinquick/prime_number_finder/raw/branch/main/install.py | python3 -`  
 Uninstall: `curl -s https://codeberg.org/melvinquick/prime_number_finder/raw/branch/main/uninstall.py | python3 -`
-
-### Windows
-
-I will be updating my install and uninstall scripts in upcoming days/weeks/months to allow this. For now, please follow the instructions in [Build Source Code](#build-source-code)
 
 ### Build Source Code
 

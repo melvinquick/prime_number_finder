@@ -9,7 +9,8 @@
 [Install on Windows](#windows)  
 [Build Source Code](#build-source-code)  
 [Visual App Showcase](#app-showcase)  
-[Other Useful Information](#useful-information)
+[Other Useful Information](#useful-information)  
+[Star History](#star-history)
 
 ## Donations
 
@@ -58,3 +59,7 @@ If you're not on Linux, or if you want to build this from source, you'll need to
 
 [Project Goals](https://codeberg.org/melvinquick/prime_number_finder/projects/14092)  
 [Latest Releases](https://pypi.org/project/prime_number_finder/)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=melvinquick/prime_number_finder&type=Date)](https://www.star-history.com/#melvinquick/prime_number_finder&Date)

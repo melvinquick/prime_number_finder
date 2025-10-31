@@ -231,7 +231,7 @@ def install():
     create_venv(venv_path)
     install_app(venv_path)
     site_package_path = get_site_package_path(venv_path)
-    version = "1.8.0"
+    version = "1.8.1"
     icon = get_icon(site_package_path)
     python = get_python_path(venv_path)
     app = get_app_path(venv_path)

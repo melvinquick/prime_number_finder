@@ -3,10 +3,6 @@
 [Ko-fi](https://ko-fi.com/melvinquick)  
 [GitHub Sponsors](https://github.com/sponsors/melvinquick)
 
-## Stars
-
-If you like this project, please consider giving it a star on [Codeberg](https://codeberg.org/melvinquick/prime_number_finder) or [GitHub](https://github.com/melvinquick/prime_number_finder)!
-
 ## Purpose
 
 The purpose of this project is to make a simple app to look for Prime Numbers and to check and see if any particular number you desire is prime.

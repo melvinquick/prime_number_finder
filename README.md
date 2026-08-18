@@ -16,5 +16,5 @@ Uninstall: `curl -s https://github.com/melvinquick/prime_number_finder/raw/branc
 
 ## Useful Information
 
-[Project Goals](https://github.com/melvinquick/prime_number_finder/projects/14092)  
+[Project](https://github.com/users/melvinquick/projects/14)  
 [Latest Releases](https://pypi.org/project/prime_number_finder/)

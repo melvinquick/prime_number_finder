@@ -1,5 +1,5 @@
-from sqlite3 import connect, Error, IntegrityError
 from os import path
+from sqlite3 import Error, IntegrityError, connect
 
 
 class DatabaseHandler:

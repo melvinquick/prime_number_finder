@@ -24,7 +24,7 @@ App to look for Prime Numbers and to check and see if any particular number you 
 The installer sets up a dedicated venv and creates a desktop shortcut.
 
 ```
-curl -s https://raw.githubusercontent.com/melvinquick/wttrman/main/install.py | python3 -
+curl -s https://raw.githubusercontent.com/melvinquick/prime_number_finder/main/install.py | python3 -
 ```
 
 ### Supported Operating Systems

@@ -8,7 +8,7 @@ from textwrap import dedent
 # Only the pip/import name is required. Everything else is derived or
 # read from the installed package metadata after install.
 # ---------------------------------------------------------------------------
-PACKAGE_NAME = "phaino"  # change this when copying to another project
+PACKAGE_NAME = "prime_number_finder"
 # ---------------------------------------------------------------------------
 
 
@@ -28,6 +28,9 @@ DISPLAY_NAME = " ".join(w.capitalize() for w in PACKAGE_NAME.split("_"))
 VENV_NAME = f"{PACKAGE_NAME}_venv"
 DESKTOP_FILENAME = f"{PACKAGE_NAME}.desktop"
 ICON_RELATIVE_PATH = f"{PACKAGE_NAME}/resources/images/{PACKAGE_NAME}-128.png"
+DATABASE_RELATIVE_PATH = f"{PACKAGE_NAME}/resources/data/prime_data.db"
+BACKUP_DIR = os.path.expanduser("~/found_primes_backup")
+BACKUP_DB_PATH = os.path.join(BACKUP_DIR, "prime_data.db")
 
 
 def get_venv_path():
@@ -38,8 +41,82 @@ def get_venv_path():
     return os.path.join(venv_dir, VENV_NAME)
 
 
+def get_site_package_path(venv_path):
+    site_packages = os.path.join(venv_path, "lib")
+    for folder in os.listdir(site_packages):
+        if folder.startswith("python"):
+            return os.path.join(site_packages, folder, "site-packages")
+    return None
+
+
 def get_desktop_file_path():
     return os.path.expanduser(f"~/.local/share/applications/{DESKTOP_FILENAME}")
+
+
+# ---------------------------------------------------------------------------
+# Backup / Restore
+# ---------------------------------------------------------------------------
+
+
+def prompt_yes_no(question):
+    if not sys.stdin.isatty():
+        return "y"
+    return input(question).lower().strip()
+
+
+def backup(site_package_path):
+    if site_package_path is None:
+        return
+    choice = prompt_yes_no("Do you want to back up your found prime files? (y/n): ")
+    if choice == "y":
+        backup_found_prime_files(site_package_path)
+    elif choice == "n":
+        print("Backup declined.")
+    else:
+        print("Invalid input. Skipping backup.")
+
+
+def backup_found_prime_files(site_packages):
+    database_app_path = os.path.join(site_packages, DATABASE_RELATIVE_PATH)
+
+    if not os.path.exists(database_app_path):
+        print("App database not found. Skipping backup.")
+        return
+
+    print(f"Backing up database to {BACKUP_DB_PATH}...", end=" ")
+    sys.stdout.flush()
+
+    os.makedirs(BACKUP_DIR, exist_ok=True)
+    shutil.copy2(database_app_path, BACKUP_DB_PATH)
+    print_green("[OK]")
+
+
+def restore(site_package_path):
+    if site_package_path is None or not os.path.exists(BACKUP_DB_PATH):
+        return
+    choice = prompt_yes_no("Do you want to restore your found prime files? (y/n): ")
+    if choice == "y":
+        restore_found_prime_files(site_package_path)
+    elif choice == "n":
+        print("Restore declined.")
+    else:
+        print("Invalid input. Skipping restore.")
+
+
+def restore_found_prime_files(site_packages):
+    database_app_path = os.path.join(site_packages, DATABASE_RELATIVE_PATH)
+
+    print("Restoring database to app path...", end=" ")
+    sys.stdout.flush()
+
+    os.makedirs(os.path.dirname(database_app_path), exist_ok=True)
+    shutil.copy2(BACKUP_DB_PATH, database_app_path)
+    print_green("[OK]")
+
+
+# ---------------------------------------------------------------------------
+# Core install / uninstall
+# ---------------------------------------------------------------------------
 
 
 def create_venv(venv_path):
@@ -102,12 +179,7 @@ def get_installed_metadata(venv_path):
     return version, description
 
 
-def get_icon(venv_path):
-    site_packages = os.path.join(venv_path, "lib")
-    for folder in os.listdir(site_packages):
-        if folder.startswith("python"):
-            site_packages = os.path.join(site_packages, folder, "site-packages")
-            break
+def get_icon(site_packages):
     return os.path.join(site_packages, ICON_RELATIVE_PATH)
 
 
@@ -143,18 +215,24 @@ def create_desktop_file(icon, version, description, python, app):
     print_green("[OK]")
 
 
-def do_uninstall():
-    """Removes venv and desktop file. Returns True if anything was removed."""
+def do_uninstall(offer_backup=True):
+    """Removes venv and desktop file. Optionally offers backup first.
+    Returns True if anything was removed."""
     venv_path = get_venv_path()
     desktop_file_path = get_desktop_file_path()
     removed = False
 
     if os.path.exists(venv_path):
+        if offer_backup:
+            site_package_path = get_site_package_path(venv_path)
+            backup(site_package_path)
         print("Removing the virtual environment...", end=" ")
         sys.stdout.flush()
         shutil.rmtree(venv_path)
         print_green("[OK]")
         removed = True
+    else:
+        print("No virtual environment found.")
 
     if os.path.exists(desktop_file_path):
         print("Removing the .desktop entry...", end=" ")
@@ -162,37 +240,43 @@ def do_uninstall():
         os.remove(desktop_file_path)
         print_green("[OK]")
         removed = True
+    else:
+        print("No .desktop entry found.")
 
     return removed
 
 
-def do_install():
-    """Fresh install: creates venv, installs app, creates desktop entry."""
+def do_install(offer_restore=True):
+    """Fresh install: creates venv, installs app, creates desktop entry.
+    Optionally offers restore if a backup exists."""
     venv_path = get_venv_path()
     create_venv(venv_path)
     install_app(venv_path)
 
-    # Read version + description from the installed package (same pattern as the original version lookup)
     version, description = get_installed_metadata(venv_path)
+    site_package_path = get_site_package_path(venv_path)
 
-    icon = get_icon(venv_path)
+    icon = get_icon(site_package_path)
     python = get_python_path(venv_path)
     app = get_app_path(venv_path)
     create_desktop_file(icon, version, description, python, app)
+
+    if offer_restore and os.path.exists(BACKUP_DB_PATH):
+        restore(site_package_path)
 
     print()
     print_green(f"{DISPLAY_NAME} v{version} has been successfully installed.")
 
 
 def handle_update():
-    """Update = full uninstall followed by fresh install."""
+    """Update = full uninstall (with backup) followed by fresh install (with restore)."""
     print(f"\nUpdating {DISPLAY_NAME}...\n")
-    existed = do_uninstall()
+    existed = do_uninstall(offer_backup=True)
     if not existed:
         print("No existing installation found. Performing fresh install.\n")
     else:
         print()
-    do_install()
+    do_install(offer_restore=True)
 
 
 def show_menu():
@@ -217,7 +301,7 @@ def show_menu():
                         )
                         continue
                     print()
-                    do_install()
+                    do_install(offer_restore=True)
                     break
 
                 elif choice == "2":
@@ -226,7 +310,7 @@ def show_menu():
 
                 elif choice == "3":
                     print()
-                    if do_uninstall():
+                    if do_uninstall(offer_backup=True):
                         print()
                         print_green(f"{DISPLAY_NAME} has been uninstalled.")
                     else:

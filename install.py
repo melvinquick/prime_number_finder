@@ -59,9 +59,15 @@ def get_desktop_file_path():
 
 
 def prompt_yes_no(question):
-    if not sys.stdin.isatty():
+    """Always read from /dev/tty so prompts work even under curl | python."""
+    try:
+        with open("/dev/tty", "r") as tty:
+            sys.stdout.write(question)
+            sys.stdout.flush()
+            return tty.readline().strip().lower()
+    except OSError:
+        # No controlling terminal — fall back to auto-yes
         return "y"
-    return input(question).lower().strip()
 
 
 def backup(site_package_path):

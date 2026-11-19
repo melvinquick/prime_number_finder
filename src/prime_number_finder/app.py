@@ -8,28 +8,28 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QIntValidator
 from PySide6.QtWidgets import (
     QApplication,
-    QMainWindow,
-    QWidget,
-    QPushButton,
-    QLabel,
-    QVBoxLayout,
-    QLineEdit,
     QGridLayout,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
 
-from .database_handler import DatabaseHandler
-from .file_handler import YamlFileHandler
-from .prime_checker import PrimeChecker
+from .components.database_handler import DatabaseHandler
+from .components.file_handler import YamlFileHandler
+from .components.prime_checker import PrimeChecker
 
 
 class PrimeNumberFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        config_file = YamlFileHandler("resources/configs/config.yml")
+        config_file = YamlFileHandler("../resources/configs/config.yml")
         self.config = config_file.load_yaml_file()
 
-        themes_file = YamlFileHandler("resources/configs/themes.yml")
+        themes_file = YamlFileHandler("../resources/styles/themes.yml")
         self.themes = themes_file.load_yaml_file()
 
         self.db_handler = DatabaseHandler()

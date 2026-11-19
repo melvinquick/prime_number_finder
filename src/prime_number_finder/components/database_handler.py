@@ -10,7 +10,7 @@ class DatabaseHandler:
         self.create_tables()
 
     def get_file_path(self, filename):
-        return path.join(path.dirname(__file__), "resources/data", filename)
+        return path.join(path.dirname(__file__), "../resources/data", filename)
 
     def create_connection(self):
         """Create a database connection to the SQLite database."""

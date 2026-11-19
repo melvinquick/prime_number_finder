@@ -54,35 +54,13 @@ def get_desktop_file_path():
 
 
 # ---------------------------------------------------------------------------
-# Backup / Restore
+# Backup / Restore (always performed)
 # ---------------------------------------------------------------------------
 
 
-def prompt_yes_no(question):
-    """Always read from /dev/tty so prompts work even under curl | python."""
-    try:
-        with open("/dev/tty", "r") as tty:
-            sys.stdout.write(question)
-            sys.stdout.flush()
-            return tty.readline().strip().lower()
-    except OSError:
-        # No controlling terminal — fall back to auto-yes
-        return "y"
-
-
-def backup(site_package_path):
-    if site_package_path is None:
-        return
-    choice = prompt_yes_no("Do you want to back up your found prime files? (y/n): ")
-    if choice == "y":
-        backup_found_prime_files(site_package_path)
-    elif choice == "n":
-        print("Backup declined.")
-    else:
-        print("Invalid input. Skipping backup.")
-
-
 def backup_found_prime_files(site_packages):
+    if site_packages is None:
+        return
     database_app_path = os.path.join(site_packages, DATABASE_RELATIVE_PATH)
 
     if not os.path.exists(database_app_path):
@@ -97,19 +75,10 @@ def backup_found_prime_files(site_packages):
     print_green("[OK]")
 
 
-def restore(site_package_path):
-    if site_package_path is None or not os.path.exists(BACKUP_DB_PATH):
-        return
-    choice = prompt_yes_no("Do you want to restore your found prime files? (y/n): ")
-    if choice == "y":
-        restore_found_prime_files(site_package_path)
-    elif choice == "n":
-        print("Restore declined.")
-    else:
-        print("Invalid input. Skipping restore.")
-
-
 def restore_found_prime_files(site_packages):
+    if site_packages is None or not os.path.exists(BACKUP_DB_PATH):
+        return
+
     database_app_path = os.path.join(site_packages, DATABASE_RELATIVE_PATH)
 
     print("Restoring database to app path...", end=" ")
@@ -221,17 +190,16 @@ def create_desktop_file(icon, version, description, python, app):
     print_green("[OK]")
 
 
-def do_uninstall(offer_backup=True):
-    """Removes venv and desktop file. Optionally offers backup first.
+def do_uninstall():
+    """Removes venv and desktop file. Always backs up the database first if present.
     Returns True if anything was removed."""
     venv_path = get_venv_path()
     desktop_file_path = get_desktop_file_path()
     removed = False
 
     if os.path.exists(venv_path):
-        if offer_backup:
-            site_package_path = get_site_package_path(venv_path)
-            backup(site_package_path)
+        site_package_path = get_site_package_path(venv_path)
+        backup_found_prime_files(site_package_path)
         print("Removing the virtual environment...", end=" ")
         sys.stdout.flush()
         shutil.rmtree(venv_path)
@@ -252,9 +220,9 @@ def do_uninstall(offer_backup=True):
     return removed
 
 
-def do_install(offer_restore=True):
+def do_install():
     """Fresh install: creates venv, installs app, creates desktop entry.
-    Optionally offers restore if a backup exists."""
+    Always restores the database if a backup exists."""
     venv_path = get_venv_path()
     create_venv(venv_path)
     install_app(venv_path)
@@ -267,8 +235,7 @@ def do_install(offer_restore=True):
     app = get_app_path(venv_path)
     create_desktop_file(icon, version, description, python, app)
 
-    if offer_restore and os.path.exists(BACKUP_DB_PATH):
-        restore(site_package_path)
+    restore_found_prime_files(site_package_path)
 
     print()
     print_green(f"{DISPLAY_NAME} v{version} has been successfully installed.")
@@ -277,12 +244,12 @@ def do_install(offer_restore=True):
 def handle_update():
     """Update = full uninstall (with backup) followed by fresh install (with restore)."""
     print(f"\nUpdating {DISPLAY_NAME}...\n")
-    existed = do_uninstall(offer_backup=True)
+    existed = do_uninstall()
     if not existed:
         print("No existing installation found. Performing fresh install.\n")
     else:
         print()
-    do_install(offer_restore=True)
+    do_install()
 
 
 def show_menu():
@@ -307,7 +274,7 @@ def show_menu():
                         )
                         continue
                     print()
-                    do_install(offer_restore=True)
+                    do_install()
                     break
 
                 elif choice == "2":
@@ -316,7 +283,7 @@ def show_menu():
 
                 elif choice == "3":
                     print()
-                    if do_uninstall(offer_backup=True):
+                    if do_uninstall():
                         print()
                         print_green(f"{DISPLAY_NAME} has been uninstalled.")
                     else:

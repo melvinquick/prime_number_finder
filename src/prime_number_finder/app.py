@@ -47,7 +47,7 @@ class PrimeNumberFinder(QMainWindow):
 
         # * Define normal variables
         self.current_number = self.db_handler.load_current_number()
-        self.check_number = int()
+        self.check_number = 0
         self.prime_list = self.db_handler.load_prime_numbers()
         self.prime_checker = PrimeChecker(self.prime_list)
         self.keep_iterating = False

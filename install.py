@@ -4,6 +4,8 @@ import shutil
 import subprocess
 import sys
 from textwrap import dedent
+from urllib.request import urlopen
+from urllib.error import URLError
 
 
 def print_green(skk):
@@ -15,19 +17,49 @@ def print_red(skk):
 
 
 def get_project_metadata():
-    """Read name and description from pyproject.toml (next to this script or one level up)."""
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    candidates = [
-        os.path.join(script_dir, "pyproject.toml"),
-        os.path.join(script_dir, "..", "pyproject.toml"),
-    ]
-    pyproject_path = next((p for p in candidates if os.path.exists(p)), None)
-    if pyproject_path is None:
-        print_red("Error: Could not find pyproject.toml")
-        sys.exit(1)
+    """Read name and description from pyproject.toml.
 
-    with open(pyproject_path, "r", encoding="utf-8") as f:
-        content = f.read()
+    Search order:
+      1. Same directory as this script (when run as a real file)
+      2. Parent of the script
+      3. Current working directory
+      4. Parent of the current working directory
+      5. Remote fallback (GitHub raw) when run via curl | python
+    """
+    candidates = []
+
+    # Local file locations (only when the script exists on disk)
+    if "__file__" in globals() and os.path.isfile(__file__):
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        candidates.append(os.path.join(script_dir, "pyproject.toml"))
+        candidates.append(os.path.join(script_dir, "..", "pyproject.toml"))
+
+    # Current working directory (covers both local runs and some remote cases)
+    cwd = os.getcwd()
+    candidates.append(os.path.join(cwd, "pyproject.toml"))
+    candidates.append(os.path.join(cwd, "..", "pyproject.toml"))
+
+    content = None
+    for path in candidates:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read()
+            break
+
+    # Remote fallback for `curl ... | python3 -`
+    if content is None:
+        remote_url = (
+            "https://raw.githubusercontent.com/melvinquick/phaino/main/pyproject.toml"
+        )
+        try:
+            with urlopen(remote_url, timeout=10) as response:
+                content = response.read().decode("utf-8")
+        except (URLError, TimeoutError, OSError):
+            content = None
+
+    if content is None:
+        print_red("Error: Could not find pyproject.toml locally or remotely")
+        sys.exit(1)
 
     name_match = re.search(
         r'^\s*name\s*=\s*["\']([^"\']+)["\']',

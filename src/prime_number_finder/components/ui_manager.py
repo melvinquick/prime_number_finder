@@ -1,95 +1,123 @@
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QIntValidator
+from PySide6.QtCore import QRegularExpression, Qt
+from PySide6.QtGui import QRegularExpressionValidator
 from PySide6.QtWidgets import (
-    QGridLayout,
+    QFrame,
+    QHBoxLayout,
     QLabel,
     QLineEdit,
     QMainWindow,
     QPushButton,
+    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
 
 
 class UIManager:
-    def __init__(self, window: QMainWindow, config: dict, themes: dict):
+    def __init__(self, window: QMainWindow, config: dict):
         self.window = window
         self.config = config
-        self.themes = themes
 
         self.iterate_button = None
-        self.most_recent_number_text = None
         self.most_recent_number = None
-        self.most_recent_prime_text = None
         self.most_recent_prime = None
         self.check_button = None
         self.check_input = None
-        self.theme_toggle = None
+        self.result_label = None
 
     def build_ui(self):
         self.window.setWindowTitle(self.config["window_title"])
-        self.window.setFixedSize(
-            self.config["window_size"]["width"], self.config["window_size"]["height"]
+        self.window.setMinimumSize(480, 400)
+        self.window.resize(500, 450)
+
+        # --- Stats Cards ---
+        stats_layout = QHBoxLayout()
+
+        num_card = QFrame()
+        num_card.setObjectName("Card")
+        num_layout = QVBoxLayout(num_card)
+        num_title = QLabel("Latest Checked")
+        num_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.most_recent_number = QLabel("2")
+        self.most_recent_number.setObjectName("DialogTitle")
+        self.most_recent_number.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        num_layout.addWidget(num_title)
+        num_layout.addWidget(self.most_recent_number)
+
+        prime_card = QFrame()
+        prime_card.setObjectName("Card")
+        prime_layout = QVBoxLayout(prime_card)
+        prime_title = QLabel("Latest Prime")
+        prime_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.most_recent_prime = QLabel("2")
+        self.most_recent_prime.setObjectName("DialogTitle")
+        self.most_recent_prime.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        prime_layout.addWidget(prime_title)
+        prime_layout.addWidget(self.most_recent_prime)
+
+        stats_layout.addWidget(num_card)
+        stats_layout.addWidget(prime_card)
+
+        # --- Check Primality Section ---
+        check_card = QFrame()
+        check_card.setObjectName("Card")
+        # Allow this card to expand vertically
+        check_card.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding
         )
 
-        self.iterate_button = QPushButton("Iterate")
+        check_layout = QVBoxLayout(check_card)
+        check_layout.setContentsMargins(16, 16, 16, 16)
+        check_layout.setSpacing(12)
 
-        self.most_recent_number_text = QLabel(
-            "Most recent number checked: ", alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.most_recent_number_text.setFixedWidth(
-            self.config["input_widgets"]["width"]
-        )
+        check_title = QLabel("Check a specific number")
+        check_title.setObjectName("DialogTitle")
+        check_title.setStyleSheet("font-size: 10pt; font-weight: 600;")
+        check_layout.addWidget(check_title)
 
-        self.most_recent_number = QLabel(alignment=Qt.AlignmentFlag.AlignRight)
-
-        self.most_recent_prime_text = QLabel(
-            "Most recent prime found: ", alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.most_recent_prime_text.setFixedWidth(self.config["input_widgets"]["width"])
-
-        self.most_recent_prime = QLabel(alignment=Qt.AlignmentFlag.AlignRight)
-
-        self.check_button = QPushButton("Check for Primality")
-        self.check_button.setFixedWidth(self.config["input_widgets"]["width"])
-
+        # Input Row
+        check_row = QHBoxLayout()
         self.check_input = QLineEdit()
-        self.check_input.setValidator(QIntValidator(bottom=0))
+        regex = QRegularExpression("^[0-9]+$")
+        self.check_input.setValidator(QRegularExpressionValidator(regex))
         self.check_input.setAlignment(Qt.AlignmentFlag.AlignRight)
+        self.check_input.setFixedHeight(35)
 
-        self.theme_toggle = QPushButton("Dark")
-        self.theme_toggle.setFixedWidth(self.config["input_widgets"]["width"])
+        self.check_button = QPushButton("Check Primality")
+        self.check_button.setFixedHeight(35)
 
+        check_row.addWidget(self.check_input, 1)
+        check_row.addWidget(self.check_button)
+        check_layout.addLayout(check_row)
+
+        # Result Label
+        self.result_label = QLabel("")
+        self.result_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.result_label.setFixedHeight(30)
+        self.result_label.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed
+        )
+        self.result_label.setStyleSheet("font-weight: bold; font-size: 12pt;")
+        check_layout.addWidget(self.result_label)
+
+        # Add a stretch inside the card so the content stays at the top when expanded
+        check_layout.addStretch()
+
+        # --- Iterate Section ---
+        self.iterate_button = QPushButton("Start Iterating")
+        self.iterate_button.setObjectName("PrimaryButton")
+        self.iterate_button.setFixedHeight(40)
+
+        # --- Main Layout ---
         page = QVBoxLayout()
-        iterate = QGridLayout()
-        numbers = QGridLayout()
-        primes = QGridLayout()
-        checks = QGridLayout()
+        page.setContentsMargins(20, 20, 20, 20)
+        page.setSpacing(20)
 
-        iterate.addWidget(self.theme_toggle, 0, 0, 1, 1)
-        iterate.addWidget(self.iterate_button, 0, 1, 1, 1)
-
-        numbers.addWidget(self.most_recent_number_text, 0, 0, 1, 1)
-        numbers.addWidget(self.most_recent_number, 0, 1, 1, 2)
-
-        primes.addWidget(self.most_recent_prime_text, 0, 0, 1, 1)
-        primes.addWidget(self.most_recent_prime, 0, 1, 1, 2)
-
-        checks.addWidget(self.check_button, 0, 0, 1, 1)
-        checks.addWidget(self.check_input, 0, 1, 1, 2)
-
-        page.addLayout(iterate)
-        page.addLayout(numbers)
-        page.addLayout(primes)
-        page.addLayout(checks)
+        # Order: Stats -> Expanding Check Card -> Bottom Button
+        page.addLayout(stats_layout)
+        page.addWidget(check_card)
+        page.addWidget(self.iterate_button)
 
         gui = QWidget()
         gui.setLayout(page)
         self.window.setCentralWidget(gui)
-
-    def apply_theme(self, theme_name: str):
-        # QSS theming will be integrated here in the next step.
-        if theme_name == "dark":
-            self.theme_toggle.setText("Dark")
-        else:
-            self.theme_toggle.setText("Light")

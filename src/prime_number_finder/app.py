@@ -1,33 +1,40 @@
 import os
 from sys import argv, exit
 
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QSettings, QTimer
+from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QApplication, QMainWindow
 
+from .components.about_dialog import AboutDialog
 from .components.database_handler import DatabaseHandler
+from .components.menubar import MenuBar
+from .components.preferences_dialog import PreferencesDialog
 from .components.prime_checker import PrimeChecker
+from .components.theme_manager import ThemeManager
 from .components.ui_manager import UIManager
-from .components.yaml_file_handler import YamlFileHandler
 
 
 class PrimeNumberFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        config_dir = os.path.expanduser("~/.config/prime_number_finder")
+        os.makedirs(config_dir, exist_ok=True)
+        settings_path = os.path.join(config_dir, "settings.conf")
+
+        self.settings = QSettings(settings_path, QSettings.Format.IniFormat)
+        self.current_theme = self.settings.value("theme", "pnf_dark")
+
         base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.theme_manager = ThemeManager(base_dir)
 
-        config_file = YamlFileHandler(
-            os.path.join(base_dir, "resources/configs/config.yaml")
-        )
-        self.config = config_file.load_yaml_file()
-
-        themes_file = YamlFileHandler(
-            os.path.join(base_dir, "resources/styles/themes.yaml")
-        )
-        self.themes = themes_file.load_yaml_file()
+        # Validate the saved theme against the available themes
+        if self.current_theme not in self.theme_manager.themes:
+            self.current_theme = "pnf_dark"
+            self.settings.setValue("theme", "pnf_dark")
 
         self.db_handler = DatabaseHandler()
-        self.ui = UIManager(self, self.config, self.themes)
+        self.ui = UIManager(self, {"window_title": "Prime Number Finder"})
 
         self.current_number = self.db_handler.load_current_number()
         self.check_number = 0
@@ -42,21 +49,60 @@ class PrimeNumberFinder(QMainWindow):
         )
         self.ui.check_input.setText(f"{self.current_number}")
 
+        MenuBar(self, self.open_preferences, self.open_about, self.copy_recent_prime)
+
         self.iterate_timer = QTimer(self)
         self.iterate_timer.setInterval(10)
+        self.iterate_timer.timeout.connect(self.iterate)
 
         self.check_timer = QTimer(self)
         self.check_timer.setInterval(10)
+        self.check_timer.timeout.connect(self.check_iterate)
+
+        self.result_hide_timer = QTimer(self)
+        self.result_hide_timer.setSingleShot(True)
+        self.result_hide_timer.timeout.connect(self.clear_result)
 
         self.ui.iterate_button.pressed.connect(self.iterate_click)
-        self.iterate_timer.timeout.connect(self.iterate)
         self.ui.check_button.pressed.connect(self.check_click)
-        self.check_timer.timeout.connect(self.check_iterate)
-        self.ui.theme_toggle.pressed.connect(self.toggle_theme)
+        self.ui.check_input.returnPressed.connect(self.check_click)
 
-        self.ui.apply_theme("dark")
-        self.check_click()
+        self.apply_theme(self.current_theme)
         self.show()
+
+    def apply_theme(self, theme_name):
+        self.current_theme = theme_name
+        qss = self.theme_manager.render(theme_name)
+        QApplication.instance().setStyleSheet(qss)
+
+    def open_preferences(self):
+        dialog = PreferencesDialog(self.theme_manager, self.current_theme, self)
+        dialog.theme_changed.connect(self.handle_theme_change)
+        dialog.exec()
+
+    def handle_theme_change(self, new_theme):
+        if new_theme != self.current_theme:
+            self.settings.setValue("theme", new_theme)
+            self.apply_theme(new_theme)
+
+    def open_about(self):
+        dialog = AboutDialog(self.theme_manager, self.current_theme, self)
+        dialog.exec()
+
+    def copy_recent_prime(self):
+        if not self.prime_list:
+            return
+
+        latest_prime = str(self.prime_list[-1])
+        QGuiApplication.clipboard().setText(latest_prime)
+
+        self.ui.result_label.setText(f"Copied {latest_prime} to clipboard!")
+        self.ui.result_label.setObjectName("ResultNeutral")
+        self.ui.result_label.style().unpolish(self.ui.result_label)
+        self.ui.result_label.style().polish(self.ui.result_label)
+
+        self.result_hide_timer.stop()
+        self.result_hide_timer.start(3000)
 
     def iterate_click(self):
         self.keep_iterating = not self.keep_iterating
@@ -64,7 +110,7 @@ class PrimeNumberFinder(QMainWindow):
             self.ui.iterate_button.setText("Stop Iterating")
             self.iterate_timer.start()
         else:
-            self.ui.iterate_button.setText("Iterate")
+            self.ui.iterate_button.setText("Start Iterating")
             self.iterate_timer.stop()
 
     def iterate(self):
@@ -83,20 +129,18 @@ class PrimeNumberFinder(QMainWindow):
         check_input_number_only = self.remove_non_ints(self.ui.check_input.text())
         if not check_input_number_only:
             return
+
         try:
             self.check_number = int(check_input_number_only)
         except ValueError:
             return
 
-        self.ui.check_button.setText("Checking")
+        self.ui.check_button.setText("Checking...")
+        self.result_hide_timer.stop()
+        self.ui.result_label.setText("")
 
         if self.check_number <= self.current_number:
-            if self.check_number in self.prime_list:
-                self.ui.check_input.setText(f"Prime: {check_input_number_only}")
-            else:
-                self.ui.check_input.setText(f"Not Prime: {check_input_number_only}")
-            self.ui.check_button.setText("Check for Primality")
-            self.check_timer.stop()
+            self._display_result()
         else:
             self.check_timer.start()
 
@@ -113,22 +157,36 @@ class PrimeNumberFinder(QMainWindow):
             self.ui.most_recent_number.setText(str(self.current_number))
 
         if self.check_number <= self.current_number:
-            self.check_click()
+            self._display_result()
+
+    def _display_result(self):
+        self.ui.check_button.setText("Check Primality")
+        self.check_timer.stop()
+
+        if self.check_number in self.prime_list:
+            self.ui.result_label.setText("Prime")
+            self.ui.result_label.setObjectName("ResultSuccess")
+        else:
+            self.ui.result_label.setText("Not Prime")
+            self.ui.result_label.setObjectName("ResultDanger")
+
+        self.ui.result_label.style().unpolish(self.ui.result_label)
+        self.ui.result_label.style().polish(self.ui.result_label)
+
+        self.result_hide_timer.start(6000)
+
+    def clear_result(self):
+        self.ui.result_label.setText("")
 
     def remove_non_ints(self, check_text):
         check_text = "".join(filter(str.isdigit, check_text))
         self.ui.check_input.setText(check_text)
         return check_text
 
-    def toggle_theme(self):
-        if self.ui.theme_toggle.text() == "Dark":
-            self.ui.apply_theme("light")
-        else:
-            self.ui.apply_theme("dark")
-
 
 def main():
     app = QApplication(argv)
+    app.setApplicationName("Prime Number Finder")
     main_window = PrimeNumberFinder()
     exit(app.exec())
 

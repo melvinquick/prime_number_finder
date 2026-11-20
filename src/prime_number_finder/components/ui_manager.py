@@ -88,34 +88,7 @@ class UIManager:
         self.window.setCentralWidget(gui)
 
     def apply_theme(self, theme_name: str):
-        theme = self.themes[theme_name]
-        general = self.themes["general"]
-
-        main_stylesheet = f"""
-            background-color: {theme["background-color"]};
-            color: {theme["color"]};
-            border: {theme["border"]};
-            border-radius: {general["border-radius"]};
-            padding: {general["padding"]};
-        """
-        widget_stylesheet = f"""
-            background-color: {theme["widget-background-color"]};
-        """
-
-        self.window.setStyleSheet(main_stylesheet)
-
-        for widget in [
-            self.iterate_button,
-            self.most_recent_number_text,
-            self.most_recent_number,
-            self.most_recent_prime_text,
-            self.most_recent_prime,
-            self.check_button,
-            self.check_input,
-            self.theme_toggle,
-        ]:
-            widget.setStyleSheet(widget_stylesheet)
-
+        # QSS theming will be integrated here in the next step.
         if theme_name == "dark":
             self.theme_toggle.setText("Dark")
         else:

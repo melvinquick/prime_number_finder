@@ -5,17 +5,9 @@ import sys
 from textwrap import dedent
 
 
-# ---------------------------------------------------------------------------
-# Project identifier: comes from the command line, NOT hardcoded.
-# Usage:  curl ... | python3 - <package_name>
-# Example: curl ... | python3 - prime_number_finder
-# ---------------------------------------------------------------------------
 def resolve_package_name():
-    """Return the pip/import name from argv, or prompt for it."""
     if len(sys.argv) > 1 and sys.argv[1].strip():
         return sys.argv[1].strip()
-
-    # Fallback: prompt interactively (only if a TTY is available)
     try:
         with open("/dev/tty", "r") as tty:
             sys.stdout.write("Enter the Python package name to install: ")
@@ -32,45 +24,14 @@ def resolve_package_name():
 
 PACKAGE_NAME = resolve_package_name()
 
-
 # ---------------------------------------------------------------------------
-# All name variants are derived from PACKAGE_NAME.
+# Derived names
 # ---------------------------------------------------------------------------
-def derive_names(pkg: str) -> dict:
-    """Compute every name/path fragment from a single package name."""
-    return {
-        # The pip/import name, e.g. "prime_number_finder"
-        "package": pkg,
-        # Console-script / executable name, e.g. "prime-number-finder"
-        "executable": pkg.replace("_", "-"),
-        # Human-readable display name, e.g. "Prime Number Finder"
-        "display": " ".join(w.capitalize() for w in pkg.split("_")),
-        # Virtualenv directory name, e.g. "prime_number_finder_venv"
-        "venv": f"{pkg}_venv",
-        # .desktop file name, e.g. "prime_number_finder.desktop"
-        "desktop_filename": f"{pkg}.desktop",
-        # Icon path inside site-packages
-        "icon_relative": f"{pkg}/resources/images/{pkg}-128.png",
-        # Database path inside site-packages
-        "database_relative": f"{pkg}/resources/data/prime_data.db",
-        # Backup directory (project-scoped so multiple installs don't collide)
-        "backup_dir": os.path.expanduser(f"~/.local/share/{pkg}/backup"),
-        # Backup database file name (fixed, lives inside backup_dir)
-        "backup_db_filename": "prime_data.db",
-    }
-
-
-NAMES = derive_names(PACKAGE_NAME)
-
-# Short-hand aliases used throughout the script
-EXECUTABLE_NAME = NAMES["executable"]
-DISPLAY_NAME = NAMES["display"]
-VENV_NAME = NAMES["venv"]
-DESKTOP_FILENAME = NAMES["desktop_filename"]
-ICON_RELATIVE_PATH = NAMES["icon_relative"]
-DATABASE_RELATIVE_PATH = NAMES["database_relative"]
-BACKUP_DIR = NAMES["backup_dir"]
-BACKUP_DB_PATH = os.path.join(BACKUP_DIR, NAMES["backup_db_filename"])
+EXECUTABLE_NAME = PACKAGE_NAME.replace("_", "-")
+DISPLAY_NAME = " ".join(w.capitalize() for w in PACKAGE_NAME.split("_"))
+VENV_NAME = f"{PACKAGE_NAME}_venv"
+DESKTOP_FILENAME = f"{PACKAGE_NAME}.desktop"
+ICON_RELATIVE_PATH = f"{PACKAGE_NAME}/resources/images/{PACKAGE_NAME}-128.png"
 
 
 # ---------------------------------------------------------------------------
@@ -90,47 +51,8 @@ def get_venv_path():
     return os.path.join(venv_dir, VENV_NAME)
 
 
-def get_site_package_path(venv_path):
-    site_packages = os.path.join(venv_path, "lib")
-    if not os.path.isdir(site_packages):
-        return None
-    for folder in os.listdir(site_packages):
-        if folder.startswith("python"):
-            return os.path.join(site_packages, folder, "site-packages")
-    return None
-
-
 def get_desktop_file_path():
     return os.path.expanduser(f"~/.local/share/applications/{DESKTOP_FILENAME}")
-
-
-# ---------------------------------------------------------------------------
-# Backup / Restore
-# ---------------------------------------------------------------------------
-def backup_found_prime_files(site_packages):
-    if site_packages is None:
-        return
-    database_app_path = os.path.join(site_packages, DATABASE_RELATIVE_PATH)
-    if not os.path.exists(database_app_path):
-        print("App database not found. Skipping backup.")
-        return
-
-    print(f"Backing up database to {BACKUP_DB_PATH}...", end=" ")
-    sys.stdout.flush()
-    os.makedirs(BACKUP_DIR, exist_ok=True)
-    shutil.copy2(database_app_path, BACKUP_DB_PATH)
-    print_green("[OK]")
-
-
-def restore_found_prime_files(site_packages):
-    if site_packages is None or not os.path.exists(BACKUP_DB_PATH):
-        return
-    database_app_path = os.path.join(site_packages, DATABASE_RELATIVE_PATH)
-    print("Restoring database to app path...", end=" ")
-    sys.stdout.flush()
-    os.makedirs(os.path.dirname(database_app_path), exist_ok=True)
-    shutil.copy2(BACKUP_DB_PATH, database_app_path)
-    print_green("[OK]")
 
 
 # ---------------------------------------------------------------------------
@@ -173,7 +95,6 @@ def install_app(venv_path):
 
 
 def get_installed_metadata(venv_path):
-    """Read version and description from the installed package inside the venv."""
     python_path = os.path.join(venv_path, "bin", "python3")
     result = subprocess.run(
         [
@@ -196,7 +117,12 @@ def get_installed_metadata(venv_path):
     return version, description
 
 
-def get_icon(site_packages):
+def get_icon(venv_path):
+    site_packages = os.path.join(venv_path, "lib")
+    for folder in os.listdir(site_packages):
+        if folder.startswith("python"):
+            site_packages = os.path.join(site_packages, folder, "site-packages")
+            break
     return os.path.join(site_packages, ICON_RELATIVE_PATH)
 
 
@@ -211,7 +137,6 @@ def get_app_path(venv_path):
 def create_desktop_file(icon, version, description, python, app):
     print("Creating the .desktop entry...", end=" ")
     sys.stdout.flush()
-
     desktop_content = dedent(f"""\
         [Desktop Entry]
         Version={version}
@@ -223,7 +148,6 @@ def create_desktop_file(icon, version, description, python, app):
         Terminal=false
         Categories=Utility;
     """)
-
     desktop_path = get_desktop_file_path()
     os.makedirs(os.path.dirname(desktop_path), exist_ok=True)
     with open(desktop_path, "w") as f:
@@ -237,15 +161,11 @@ def do_uninstall():
     removed = False
 
     if os.path.exists(venv_path):
-        site_package_path = get_site_package_path(venv_path)
-        backup_found_prime_files(site_package_path)
         print("Removing the virtual environment...", end=" ")
         sys.stdout.flush()
         shutil.rmtree(venv_path)
         print_green("[OK]")
         removed = True
-    else:
-        print("No virtual environment found.")
 
     if os.path.exists(desktop_file_path):
         print("Removing the .desktop entry...", end=" ")
@@ -253,8 +173,6 @@ def do_uninstall():
         os.remove(desktop_file_path)
         print_green("[OK]")
         removed = True
-    else:
-        print("No .desktop entry found.")
 
     return removed
 
@@ -265,14 +183,14 @@ def do_install():
     install_app(venv_path)
 
     version, description = get_installed_metadata(venv_path)
-    site_package_path = get_site_package_path(venv_path)
 
-    icon = get_icon(site_package_path)
-    python = get_python_path(venv_path)
-    app = get_app_path(venv_path)
-    create_desktop_file(icon, version, description, python, app)
-
-    restore_found_prime_files(site_package_path)
+    create_desktop_file(
+        get_icon(venv_path),
+        version,
+        description,
+        get_python_path(venv_path),
+        get_app_path(venv_path),
+    )
 
     print()
     print_green(f"{DISPLAY_NAME} v{version} has been successfully installed.")
@@ -306,8 +224,7 @@ def show_menu():
                 choice = tty.readline().strip()
 
                 if choice == "1":
-                    venv_path = get_venv_path()
-                    if os.path.exists(venv_path):
+                    if os.path.exists(get_venv_path()):
                         print_red(
                             "\nExisting installation detected. "
                             "Please use 'Update' instead."
@@ -316,11 +233,9 @@ def show_menu():
                     print()
                     do_install()
                     break
-
                 elif choice == "2":
                     handle_update()
                     break
-
                 elif choice == "3":
                     print()
                     if do_uninstall():
@@ -329,11 +244,9 @@ def show_menu():
                     else:
                         print(f"\n{DISPLAY_NAME} does not appear to be installed.")
                     break
-
                 elif choice == "0":
                     print("\nGoodbye.")
                     break
-
                 else:
                     print_red("\nInvalid selection. Please try again.")
     except OSError:

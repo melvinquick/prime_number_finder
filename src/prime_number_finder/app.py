@@ -26,10 +26,10 @@ class PrimeNumberFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        config_file = YamlFileHandler("../resources/configs/config.yml")
+        config_file = YamlFileHandler("../resources/configs/config.yaml")
         self.config = config_file.load_yaml_file()
 
-        themes_file = YamlFileHandler("../resources/styles/themes.yml")
+        themes_file = YamlFileHandler("../resources/styles/themes.yaml")
         self.themes = themes_file.load_yaml_file()
 
         self.db_handler = DatabaseHandler()

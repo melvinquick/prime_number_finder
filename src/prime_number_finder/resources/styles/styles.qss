@@ -1,0 +1,133 @@
+QMainWindow, QDialog {
+    background-color: @background-color;
+}
+
+QWidget {
+    color: @text-color;
+    font-family: "Segoe UI", "Inter", sans-serif;
+    font-size: 10pt;
+}
+
+QMenuBar {
+    background-color: @surface-color;
+    border-bottom: 1px solid @border-color;
+}
+
+QMenuBar::item {
+    padding: 4px 8px;
+    background: transparent;
+}
+
+QMenuBar::item:selected {
+    background: @widget-background-color;
+    border-radius: 4px;
+}
+
+QMenu {
+    background-color: @surface-color;
+    border: 1px solid @border-color;
+}
+
+QMenu::item:selected {
+    background-color: @widget-background-color;
+}
+
+/* Modern Card Style */
+QFrame#Card {
+    background-color: @surface-color;
+    border: 1px solid @border-color;
+    border-radius: 8px;
+}
+
+/* Primary Action Button */
+QPushButton#PrimaryButton {
+    background-color: @accent-color;
+    color: @background-color;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: bold;
+}
+
+QPushButton#PrimaryButton:hover {
+    background-color: @text-color;
+}
+
+QPushButton#PrimaryButton:pressed {
+    background-color: @border-color;
+}
+
+/* Secondary Action Button */
+QPushButton {
+    background-color: @widget-background-color;
+    border: 1px solid @border-color;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+QPushButton:hover {
+    background-color: @border-color;
+}
+
+/* Input Fields */
+QLineEdit, QComboBox {
+    background-color: @widget-background-color;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+QLineEdit:focus, QComboBox:focus {
+    border: 1px solid @accent-color;
+}
+
+QLabel#DialogTitle {
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+/* ComboBox & Dropdown Overrides */
+QComboBox {
+    color: @text-color;
+    padding: 6px 10px;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 0px;
+}
+
+QComboBox::down-arrow {
+    image: none;
+    border: none;
+    width: 0px;
+    height: 0px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: @surface-color;
+    color: @text-color;
+    selection-background-color: @accent-color;
+    selection-color: @background-color;
+    border: 1px solid @border-color;
+    outline: none;
+}
+
+/* Result States */
+QLabel#ResultSuccess {
+    color: @success-color;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+QLabel#ResultDanger {
+    color: @danger-color;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+QLabel#ResultNeutral {
+    color: @accent-color;
+    font-weight: bold;
+    font-size: 12pt;
+}

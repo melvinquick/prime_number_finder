@@ -1,15 +1,119 @@
-light:
-  background-color: "#d8dee9"
-  color: "#2e3440"
-  border: 1px solid '#e5e9f0'
-  widget-background-color: "#eceff4"
+pnf_dark:
+  background-color: "#0B1016" # Deep obsidian
+  surface-color: "#141A22" # Dark slate
+  widget-background-color: "#1F2937" # Elevated surface
+  text-color: "#E2E8F0" # Crisp off-white
+  accent-color: "#2DD4BF" # Vibrant teal
+  border-color: "#334155" # Subtle borders
+  success-color: "#10B981" # Emerald
+  danger-color: "#F43F5E" # Rose
 
-dark:
-  background-color: "#2e3440"
-  color: "#eceff4"
-  border: 1px solid '#434c5e'
-  widget-background-color: "#4c566a"
+pnf_light:
+  background-color: "#F8FAFC" # Very light gray-blue
+  surface-color: "#FFFFFF" # Pure white cards
+  widget-background-color: "#F1F5F9" # Soft gray
+  text-color: "#0F172A" # Deep slate text
+  accent-color: "#0EA5E9" # Bright sky blue
+  border-color: "#E2E8F0" # Soft border
+  success-color: "#059669" # Emerald dark
+  danger-color: "#E11D48" # Rose dark
 
-general:
-  border-radius: "4px"
-  padding: "2px 4px"
+phaino_dark:
+  background-color: "#0D1117"
+  surface-color: "#161B22"
+  widget-background-color: "#21262D"
+  text-color: "#C9D1D9"
+  accent-color: "#F85149"
+  border-color: "#30363D"
+  success-color: "#3FB950"
+  danger-color: "#F85149"
+
+phaino_light:
+  background-color: "#F5F0EB"
+  surface-color: "#FFFDF9"
+  widget-background-color: "#EBE3DB"
+  text-color: "#3E3530"
+  accent-color: "#B35938"
+  border-color: "#D1C7BD"
+  success-color: "#5E8C61"
+  danger-color: "#B54B4B"
+
+equinox_dark:
+  background-color: "#1a1f2e"
+  surface-color: "#22283a"
+  widget-background-color: "#2d3a5c"
+  text-color: "#e8eef7"
+  accent-color: "#5b6edb"
+  border-color: "#2d3f56"
+  success-color: "#7aa555"
+  danger-color: "#e85a5f"
+
+equinox_light:
+  background-color: "#f5f3f0"
+  surface-color: "#fbfaf8"
+  widget-background-color: "#d9e5f5"
+  text-color: "#2c2e3a"
+  accent-color: "#1f5b9f"
+  border-color: "#d9d5cf"
+  success-color: "#5b8c28"
+  danger-color: "#c72c23"
+
+catppuccin_mocha:
+  background-color: "#1e1e2e"
+  surface-color: "#181825"
+  widget-background-color: "#313244"
+  text-color: "#cdd6f4"
+  accent-color: "#f38ba8"
+  border-color: "#45475a"
+  success-color: "#a6e3a1"
+  danger-color: "#f38ba8"
+
+catppuccin_latte:
+  background-color: "#eff1f5"
+  surface-color: "#e6e9ef"
+  widget-background-color: "#ccd0da"
+  text-color: "#4c4f69"
+  accent-color: "#d20f39"
+  border-color: "#bcc0cc"
+  success-color: "#40a02b"
+  danger-color: "#d20f39"
+
+solarized_dark:
+  background-color: "#002b36"
+  surface-color: "#073642"
+  widget-background-color: "#103845"
+  text-color: "#93a1a1"
+  accent-color: "#268bd2"
+  border-color: "#268bd2"
+  success-color: "#859900"
+  danger-color: "#dc322f"
+
+solarized_light:
+  background-color: "#fdf6e3"
+  surface-color: "#eee8d5"
+  widget-background-color: "#d3d9d6"
+  text-color: "#586e75"
+  accent-color: "#268bd2"
+  border-color: "#268bd2"
+  success-color: "#859900"
+  danger-color: "#dc322f"
+
+gruvbox_dark:
+  background-color: "#282828"
+  surface-color: "#1d2021"
+  widget-background-color: "#3c3836"
+  text-color: "#ebdbb2"
+  accent-color: "#d79921"
+  border-color: "#504945"
+  success-color: "#98971a"
+  danger-color: "#cc241d"
+
+gruvbox_light:
+  background-color: "#fbf1c7"
+  surface-color: "#f2e5bc"
+  widget-background-color: "#ebdbb2"
+  text-color: "#3c3836"
+  accent-color: "#b57614"
+  border-color: "#d5c4a1"
+  success-color: "#79740e"
+  danger-color: "#9d0006"

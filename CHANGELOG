@@ -1,152 +1,115 @@
-# Psswd Box Release Notes
+# Prime Number Finder Release Notes
 
 ## 1.0.0 (25 Mar 2025)
+
+### New Features
 
 - Initial release
 
 ## 1.0.1 (25 Mar 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
-
-### Patch Changes
-
-### Documentation Changes
+- General maintenance and minor patches
 
 ## 1.0.2 (25 Mar 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
-
-### Patch Changes
-
-### Documentation Changes
+- General maintenance and minor patches
 
 ## 1.1.0 (26 Mar 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
+- Cleaned up the semiprime and squarefree prime checks
 
-- [Clean up the semiprime and squarefree prime checks](https://codeberg.org/melvinquick/prime_number_finder/issues/2)
+### Documentation
 
-### Patch Changes
-
-### Documentation Changes
-
-- [Add docstrings to each function in prime_checker to make it more apparent what's going on](https://codeberg.org/melvinquick/prime_number_finder/issues/1)
+- Added docstrings to each function in `prime_checker` to make it more apparent what's going on
 
 ## 1.2.1 (27 Mar 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
+- Broke out `digit_sum` function to two separate functions for logic cleanup purposes
 
-- [Break out digit_sum function to two separate functions for logic cleanup purposes](https://codeberg.org/melvinquick/prime_number_finder/issues/4)
+### Bug Fixes
 
-### Patch Changes
-
-- [Move calculations to check functions and out of the prime_check function](https://codeberg.org/melvinquick/prime_number_finder/issues/3)
-
-### Documentation Changes
+- Moved calculations to check functions and out of the `prime_check` function
 
 ## 1.5.0 (31 Mar 2025)
 
-### Major Changes
+### New Features
 
-### Minor Changes
+- Added toggle button for light/dark themes
+- Updated check input box to be able to have text in it as well so the `check_output` widget could go away
 
-- [Update UI to be more in line with my other apps](https://codeberg.org/melvinquick/prime_number_finder/issues/5)
-- [Add toggle button for light/dark themes](https://codeberg.org/melvinquick/prime_number_finder/issues/6)
-- [Update check input box to be able to have text in it as well so the check_output widget can go away](https://codeberg.org/melvinquick/prime_number_finder/issues/7)
+### Improvements
 
-### Patch Changes
-
-### Documentation Changes
+- Updated UI to be more in line with other apps
 
 ## 1.7.0 (01 Apr 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
-
-- [Move current_number.txt and prime_numbers.txt file into new resources/data directory](https://codeberg.org/melvinquick/prime_number_finder/issues/8)
-- [Delete unused config_handler.py and combine prime_file_handler.py and yaml_file_handler.py into one file_handler.py file](https://codeberg.org/melvinquick/prime_number_finder/issues/9)
-
-### Patch Changes
-
-### Documentation Changes
+- Moved `current_number.txt` and `prime_numbers.txt` file into new `resources/data` directory
+- Deleted unused `config_handler.py` and combined `prime_file_handler.py` and `yaml_file_handler.py` into one `file_handler.py` file
 
 ## 1.7.1 (01 Apr 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
-
-### Patch Changes
-
-- [Delete unused config_handler.py file](https://codeberg.org/melvinquick/prime_number_finder/issues/10)
-
-### Documentation Changes
+- Deleted unused `config_handler.py` file
 
 ## 1.8.0 (02 Apr 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
-
-### Patch Changes
-
-- [Switch from using .TXT files for data storage to using a sqlite3 database](https://codeberg.org/melvinquick/prime_number_finder/issues/11)
-
-### Documentation Changes
+- Switched from using `.TXT` files for data storage to using a sqlite3 database
 
 ## 1.8.1 (31 Oct 2025)
 
-### Major Changes
+### Improvements
 
-### Minor Changes
-
-### Patch Changes
-
-- Reduce required Python version to 3.10
-
-### Documentation Changes
+- Reduced required Python version to 3.10
 
 ## 1.8.2 (23 Jun 2026)
 
-### Major Changes
-
-### Minor Changes
-
-### Patch Changes
+### Improvements
 
 - Version bump to update dependencies
-
-### Documentation Changes
 
 ## 1.8.3 (21 Jul 2026)
 
-### Major Changes
-
-### Minor Changes
-
-### Patch Changes
+### Improvements
 
 - Version bump to update dependencies
 
-### Documentation Changes
-
 ## 1.8.17 (26 Oct 2026)
 
-### Major Changes
-
-### Minor Changes
-
-### Patch Changes
+### Improvements
 
 - Version bump to update dependencies and Python versions
 
-### Documentation Changes
+## 2.0.0 (20 Nov 2026)
+
+### New Features
+
+- Added a modern card-based UI layout with dedicated sections for stats and number checks
+- Added a complete overhaul of the theming system, introducing custom "Prime Number Finder Dark/Light" palettes alongside Phaino, Equinox, Catppuccin, Solarized, and Gruvbox themes
+- Added a Preferences dialog to live-switch themes and manage settings
+- Added an About dialog accessible from the Help menu
+- Added a "Copy Most Recent Prime" action to the Edit menu
+- Added visual feedback for primality checks (green for Prime, red for Not Prime) and clipboard copies in the result label
+- The manual check input now supports arbitrarily large integers (removed the 32-bit limitation)
+
+### Improvements
+
+- Moved user data (database and settings) to `~/.config/prime_number_finder/` to keep the virtual environment clean and persist data across uninstalls
+- Refactored `app.py` to extract UI generation into a dedicated `ui_manager.py` component
+- Cleaned up dead code and removed legacy terminal/CLI logic from `prime_checker.py`
+- Removed the backup/restore database functionality from `install.py` as the `.config` directory now handles persistence natively
+- Updated `install.py` to be completely project-agnostic and accept the package name as an argument
+- Pressing Enter in the manual check input field now triggers the check action
+- Set minimum window size to prevent UI elements from squishing on smaller screens

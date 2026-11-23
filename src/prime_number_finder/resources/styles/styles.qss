@@ -1,133 +1,143 @@
-QMainWindow, QDialog {
-    background-color: @background-color;
-}
+/* =========================================
+   UNIVERSAL BASE (DO NOT EDIT PER APP)
+   ========================================= */
 
 QWidget {
-    color: @text-color;
-    font-family: "Segoe UI", "Inter", sans-serif;
-    font-size: 10pt;
+    background-color: {{background-color}};
+    color: {{color}};
+    font-family: "{{font-family}}";
+    font-size: {{font-size-base}};
+}
+
+QMainWindow, QDialog {
+    background-color: {{background-color}};
+}
+
+QToolTip {
+    background-color: {{surface-color}};
+    color: {{color}};
+    border: {{border}};
+    border-radius: {{border-radius}};
+    padding: {{padding-v}} {{padding-h}};
+}
+
+QLabel {
+    background: transparent;
+    color: {{color}};
 }
 
 QMenuBar {
-    background-color: @surface-color;
-    border-bottom: 1px solid @border-color;
+    background-color: {{surface-color}};
+    color: {{color}};
+    border-bottom: {{border}};
 }
 
 QMenuBar::item {
-    padding: 4px 8px;
     background: transparent;
+    padding: 6px 12px;
+    border-radius: {{border-radius}};
 }
 
 QMenuBar::item:selected {
-    background: @widget-background-color;
-    border-radius: 4px;
+    background-color: {{widget-background-color}};
 }
 
 QMenu {
-    background-color: @surface-color;
-    border: 1px solid @border-color;
+    background-color: {{surface-color}};
+    color: {{color}};
+    border: {{border}};
+    border-radius: {{border-radius}};
+    padding: 4px;
+}
+
+QMenu::item {
+    padding: 6px 24px;
+    border-radius: {{border-radius}};
 }
 
 QMenu::item:selected {
-    background-color: @widget-background-color;
+    background-color: {{accent-color}};
+    color: {{accent-text-color}};
 }
 
-/* Modern Card Style */
-QFrame#Card {
-    background-color: @surface-color;
-    border: 1px solid @border-color;
-    border-radius: 8px;
-}
-
-/* Primary Action Button */
-QPushButton#PrimaryButton {
-    background-color: @accent-color;
-    color: @background-color;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-weight: bold;
-}
-
-QPushButton#PrimaryButton:hover {
-    background-color: @text-color;
-}
-
-QPushButton#PrimaryButton:pressed {
-    background-color: @border-color;
-}
-
-/* Secondary Action Button */
-QPushButton {
-    background-color: @widget-background-color;
-    border: 1px solid @border-color;
-    border-radius: 4px;
-    padding: 6px 12px;
-}
-
-QPushButton:hover {
-    background-color: @border-color;
-}
-
-/* Input Fields */
-QLineEdit, QComboBox {
-    background-color: @widget-background-color;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    padding: 4px 8px;
-}
-
-QLineEdit:focus, QComboBox:focus {
-    border: 1px solid @accent-color;
+QFrame#Card, QFrame#Section {
+    background-color: {{surface-color}};
+    border: {{border}};
+    border-radius: {{border-radius}};
 }
 
 QLabel#DialogTitle {
-    font-size: 14pt;
-    font-weight: bold;
+    font-size: {{font-size-lg}};
+    font-weight: 700;
+    color: {{color}};
 }
 
-/* ComboBox & Dropdown Overrides */
-QComboBox {
-    color: @text-color;
-    padding: 6px 10px;
+QLabel#MutedLabel {
+    color: {{muted-color}};
+    font-size: {{font-size-base}};
+}
+
+QLabel#ResultSuccess { color: {{success-color}}; font-weight: bold; font-size: {{font-size-lg}}; }
+QLabel#ResultDanger  { color: {{danger-color}};  font-weight: bold; font-size: {{font-size-lg}}; }
+QLabel#ResultNeutral { color: {{accent-color}}; font-weight: bold; font-size: {{font-size-lg}}; }
+
+QPushButton {
+    background-color: {{widget-background-color}};
+    color: {{color}};
+    border: {{border}};
+    border-radius: {{border-radius}};
+    padding: {{padding-v}} {{padding-h}};
+    min-height: 24px;
+}
+
+QPushButton:hover {
+    border-color: {{accent-color}};
+}
+
+QPushButton:pressed {
+    background-color: {{accent-color}};
+    color: {{accent-text-color}};
+}
+
+QPushButton#PrimaryButton {
+    background-color: {{accent-color}};
+    color: {{accent-text-color}};
+    border: 1px solid {{accent-color}};
+    font-weight: 700;
+    padding: 12px 16px;
+    font-size: {{font-size-lg}};
+}
+
+QPushButton#PrimaryButton:hover {
+    background-color: {{accent-hover-color}};
+    border-color: {{accent-hover-color}};
+}
+
+QLineEdit, QComboBox {
+    background-color: {{widget-background-color}};
+    color: {{color}};
+    border: {{border}};
+    border-radius: {{border-radius}};
+    padding: {{padding-v}} {{padding-h}};
+    selection-background-color: {{accent-color}};
+    selection-color: {{accent-text-color}};
+}
+
+QLineEdit:focus, QComboBox:focus {
+    border: 1px solid {{accent-color}};
 }
 
 QComboBox::drop-down {
     border: none;
-    width: 0px;
-}
-
-QComboBox::down-arrow {
-    image: none;
-    border: none;
-    width: 0px;
-    height: 0px;
+    width: 30px;
 }
 
 QComboBox QAbstractItemView {
-    background-color: @surface-color;
-    color: @text-color;
-    selection-background-color: @accent-color;
-    selection-color: @background-color;
-    border: 1px solid @border-color;
+    background-color: {{surface-color}};
+    color: {{color}};
+    border: {{border}};
+    border-radius: {{border-radius}};
+    selection-background-color: {{accent-color}};
+    selection-color: {{accent-text-color}};
     outline: none;
-}
-
-/* Result States */
-QLabel#ResultSuccess {
-    color: @success-color;
-    font-weight: bold;
-    font-size: 12pt;
-}
-
-QLabel#ResultDanger {
-    color: @danger-color;
-    font-weight: bold;
-    font-size: 12pt;
-}
-
-QLabel#ResultNeutral {
-    color: @accent-color;
-    font-weight: bold;
-    font-size: 12pt;
 }

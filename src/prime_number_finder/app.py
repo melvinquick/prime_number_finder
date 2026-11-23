@@ -5,6 +5,9 @@ from PySide6.QtCore import QSettings, QTimer
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QApplication, QMainWindow
 
+from prime_number_finder.components.qss_file_handler import QssFileHandler
+from prime_number_finder.components.yaml_file_handler import YamlFileHandler
+
 from .components.about_dialog import AboutDialog
 from .components.database_handler import DatabaseHandler
 from .components.menubar import MenuBar
@@ -18,20 +21,18 @@ class PrimeNumberFinder(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.themes = YamlFileHandler(
+            "../resources/styles/themes.yaml"
+        ).load_yaml_file()
+        qss = QssFileHandler("../resources/styles/styles.qss").load_qss_file()
+        self.theme_manager = ThemeManager(self.themes, qss)
+
         config_dir = os.path.expanduser("~/.config/prime_number_finder")
         os.makedirs(config_dir, exist_ok=True)
         settings_path = os.path.join(config_dir, "settings.conf")
-
         self.settings = QSettings(settings_path, QSettings.Format.IniFormat)
-        self.current_theme = self.settings.value("theme", "pnf_dark")
 
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        self.theme_manager = ThemeManager(base_dir)
-
-        # Validate the saved theme against the available themes
-        if self.current_theme not in self.theme_manager.themes:
-            self.current_theme = "pnf_dark"
-            self.settings.setValue("theme", "pnf_dark")
+        self.theme_name = self.settings.value("theme", ThemeManager.DEFAULT_THEME)
 
         self.db_handler = DatabaseHandler()
         self.ui = UIManager(self, {"window_title": "Prime Number Finder"})
@@ -67,7 +68,7 @@ class PrimeNumberFinder(QMainWindow):
         self.ui.check_button.pressed.connect(self.check_click)
         self.ui.check_input.returnPressed.connect(self.check_click)
 
-        self.apply_theme(self.current_theme)
+        self.apply_theme(self.theme_name)
         self.show()
 
     def apply_theme(self, theme_name):

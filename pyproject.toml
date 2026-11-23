@@ -1,12 +1,12 @@
 [project]
 name = "prime_number_finder"
-version = "2.0.0"
+version = "2.1.0"
 description = "Python program for finding/checking Prime Numbers."
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Melvin Quick", email = "melvinquick@proton.me" }]
 requires-python = ">=3.11"
-dependencies = ["pyside6>=6.12.0", "pyyaml>=6.0.3"]
+dependencies = ["pyside6>=6.12.0", "pyyaml>=6.0.4"]
 
 [project.urls]
 repository = "https://github.com/melvinquick/prime_number_finder"

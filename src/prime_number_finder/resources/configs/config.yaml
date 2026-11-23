@@ -1,6 +1,0 @@
-window_title: "Prime Number Finder"
-window_size:
-  width: 460
-  height: 130
-input_widgets:
-  width: 180

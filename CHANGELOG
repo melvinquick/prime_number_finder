@@ -113,3 +113,21 @@
 - Updated `install.py` to be completely project-agnostic and accept the package name as an argument
 - Pressing Enter in the manual check input field now triggers the check action
 - Set minimum window size to prevent UI elements from squishing on smaller screens
+
+## 2.1.0 (23 Nov 2026)
+
+### New Features
+
+- Added the "Sugar Pop" (light) and "Sugar Goth" (dark) themes to the theme selection.
+
+### Improvements
+
+- **Ecosystem Unification:** Standardized the `ThemeManager`, `themes.yaml`, and `styles.qss` across all Melvin Quick applications for a consistent cross-app experience.
+- Removed all one-off app-specific themes (e.g., Prime Number Finder Dark/Light) in favor of shared ecosystem themes.
+- Renamed the legacy "Phaino Dark/Light" themes to "Phaino Dusk" and "Phaino Dawn".
+- Simplified the theme sorting logic in the Preferences dialog to automatically group Dark/Dusk themes before Light/Dawn themes, and alphabetize the list.
+- Updated the default theme to "Sugar Goth".
+
+### Bug Fixes
+
+- Fixed an issue where the Preferences dialog would not update its own styling when a new theme was selected.

@@ -45,17 +45,30 @@ class PreferencesDialog(QDialog):
         theme_label.setFixedWidth(60)
 
         self.theme_combo = QComboBox()
-        for name in sorted(self.theme_manager.themes.keys()):
-            # Format "pnf_dark" into "Prime Number Finder Dark"
+
+        # Build a list of valid themes, excluding "general", and sort them
+        valid_themes = [k for k in self.theme_manager.themes if k != "general"]
+
+        for name in sorted(valid_themes):
+            # Full name replacements for all apps
             display_name = (
-                name.replace("pnf", "prime number finder").replace("_", " ").title()
+                name.replace("pnf", "Prime Number Finder")
+                .replace("psswd_box", "Psswd Box")
+                .replace("scramble_generator", "Scramble Generator")
+                .replace("phaino", "Phaino")
+                .replace("wttrman", "Wttrman")
+                .replace("_", " ")
+                .title()
             )
+
             self.theme_combo.addItem(display_name, userData=name)
 
+        # Set the dropdown to the currently active theme
         idx = self.theme_combo.findData(self.current_theme)
         if idx >= 0:
             self.theme_combo.setCurrentIndex(idx)
 
+        # Connect the signal so changing the dropdown actually updates the theme
         self.theme_combo.currentIndexChanged.connect(self._on_theme_selected)
 
         theme_row.addWidget(theme_label)
